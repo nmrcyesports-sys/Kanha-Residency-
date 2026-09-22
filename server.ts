@@ -680,6 +680,13 @@ async function startServer() {
   });
 
   // -------------------------------------------------------------
+  // API 404 CATCH-ALL (PREVENT HTML FALLBACK FOR /api/* ROUTES)
+  // -------------------------------------------------------------
+  app.all('/api/*', (req, res) => {
+    res.status(404).json({ error: `API route not found: ${req.method} ${req.originalUrl}` });
+  });
+
+  // -------------------------------------------------------------
   // VITE MIDDLEWARE (DEV) / STATIC SERVE (PROD)
   // -------------------------------------------------------------
   if (process.env.NODE_ENV !== 'production') {
