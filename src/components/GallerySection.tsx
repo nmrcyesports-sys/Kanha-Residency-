@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { X, ZoomIn, Eye, Sparkles } from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { X, ZoomIn, ChevronLeft, ChevronRight } from 'lucide-react';
 import type { GalleryItem } from '../types';
 import { api } from '../services/api';
-import { ScrollReveal } from './ScrollExperience';
 
 const FALLBACK_GALLERY: GalleryItem[] = [
   {
@@ -98,73 +98,117 @@ export function GallerySection() {
     ? items
     : items.filter((item) => item.category.toLowerCase() === selectedCategory.toLowerCase());
 
+  const currentIndex = activeLightboxItem
+    ? filteredItems.findIndex((it) => it.id === activeLightboxItem.id)
+    : -1;
+
+  const handlePrev = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (filteredItems.length === 0) return;
+    const prevIdx = currentIndex <= 0 ? filteredItems.length - 1 : currentIndex - 1;
+    setActiveLightboxItem(filteredItems[prevIdx]);
+  };
+
+  const handleNext = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (filteredItems.length === 0) return;
+    const nextIdx = currentIndex >= filteredItems.length - 1 ? 0 : currentIndex + 1;
+    setActiveLightboxItem(filteredItems[nextIdx]);
+  };
+
+  // Keyboard navigation for lightbox
+  useEffect(() => {
+    if (!activeLightboxItem) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setActiveLightboxItem(null);
+      } else if (e.key === 'ArrowLeft') {
+        handlePrev();
+      } else if (e.key === 'ArrowRight') {
+        handleNext();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeLightboxItem, currentIndex, filteredItems]);
+
+  // Lock background body scroll cleanly without touching documentElement
+  useEffect(() => {
+    if (activeLightboxItem) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [activeLightboxItem]);
+
   return (
-    <section className="py-24 bg-[#0A0B0D] text-[#FAF7F2] relative">
+    <section id="gallery-section" className="py-20 sm:py-24 bg-[#0A0B0D] text-[#FAF7F2] relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <ScrollReveal direction="up">
-          <div className="text-center max-w-2xl mx-auto mb-14">
-            <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#C5A880] mb-2 block">
-              Captured Moments
-            </span>
-            <h2 className="font-serif text-4xl sm:text-6xl font-normal text-[#FAF7F2] mb-4">
-              The Gallery
-            </h2>
-            <p className="text-xs sm:text-sm text-[#A3998C] font-light leading-relaxed">
-              Immerse yourself in the bespoke architecture, tranquil interiors, and sacred Mathura heritage of Kanha Residency.
-            </p>
-          </div>
-        </ScrollReveal>
+        <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-14">
+          <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#C5A880] mb-2 block">
+            Captured Moments
+          </span>
+          <h2 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-normal text-[#FAF7F2] mb-4">
+            The Gallery
+          </h2>
+          <p className="text-xs sm:text-sm text-[#A3998C] font-light leading-relaxed">
+            Immerse yourself in the bespoke architecture, tranquil interiors, and sacred Mathura heritage of Kanha Residency.
+          </p>
+        </div>
 
         {/* Filter Tabs */}
-        <ScrollReveal delay={0.1} direction="up">
-          <div className="flex flex-wrap items-center justify-center gap-2 mb-12">
-            {categories.map((cat) => {
-              const isActive = selectedCategory === cat;
-              return (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-4 py-2 rounded-full text-xs uppercase tracking-[0.18em] font-medium transition-all duration-300 cursor-pointer luxury-pill-hover ${
-                    isActive
-                      ? 'bg-[#C5A880] text-[#121316] font-bold shadow-md shadow-[#C5A880]/20'
-                      : 'bg-[#16171B] text-[#A3998C] hover:text-[#FAF7F2] border border-[#2D2822]'
-                  }`}
-                >
-                  {cat}
-                </button>
-              );
-            })}
-          </div>
-        </ScrollReveal>
-
-        {/* Gallery Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          {filteredItems.map((item, index) => (
-            <ScrollReveal key={item.id} delay={(index % 4) * 0.08} direction="up" className={index % 5 === 0 ? 'sm:col-span-2 sm:row-span-2' : ''}>
-              <div
-                onClick={() => setActiveLightboxItem(item)}
-                className={`group relative overflow-hidden rounded-2xl bg-[#141518] border border-[#2B2721] cursor-pointer luxury-card-hover w-full ${
-                  index % 5 === 0 ? 'h-96 sm:h-full min-h-[320px]' : 'h-64 sm:h-72'
+        <div className="flex flex-wrap items-center justify-center gap-2 mb-10 sm:mb-12">
+          {categories.map((cat) => {
+            const isActive = selectedCategory === cat;
+            return (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-4 py-2 rounded-full text-xs uppercase tracking-[0.18em] font-medium transition-colors duration-150 cursor-pointer ${
+                  isActive
+                    ? 'bg-[#C5A880] text-[#121316] font-bold shadow-md shadow-[#C5A880]/20'
+                    : 'bg-[#16171B] text-[#A3998C] hover:text-[#FAF7F2] border border-[#2D2822]'
                 }`}
               >
+                {cat}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Gallery Grid: Direct, instant click without motion wrappers */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          {filteredItems.map((item, index) => (
+            <div
+              key={item.id}
+              onClick={() => setActiveLightboxItem(item)}
+              className={`group relative overflow-hidden rounded-2xl bg-[#141518] border border-[#2B2721] cursor-pointer hover:border-[#C5A880]/70 transition-all duration-200 w-full ${
+                index % 5 === 0 ? 'sm:col-span-2 sm:row-span-2 h-80 sm:h-full min-h-[300px]' : 'h-64 sm:h-72'
+              }`}
+            >
               <img
                 src={item.image}
                 alt={item.title}
                 referrerPolicy="no-referrer"
+                decoding="async"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src =
                     'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1200&q=80';
                 }}
-                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 filter brightness-95 group-hover:brightness-100"
+                className="w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-105 filter brightness-95 group-hover:brightness-100"
                 loading="lazy"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-90 transition-opacity" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-60 group-hover:opacity-90 transition-opacity duration-200" />
 
-              {/* Hover Details */}
-              <div className="absolute inset-0 p-5 flex flex-col justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              {/* Hover Details & Zoom Icon */}
+              <div className="absolute inset-0 p-5 flex flex-col justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 <div className="flex justify-end">
-                  <span className="p-2 rounded-full bg-[#121316]/80 text-[#C5A880] backdrop-blur-md">
+                  <span className="p-2.5 rounded-full bg-[#121316]/90 text-[#C5A880] shadow-md border border-[#3A332A]">
                     <ZoomIn className="w-4 h-4" />
                   </span>
                 </div>
@@ -181,55 +225,108 @@ export function GallerySection() {
                 </div>
               </div>
             </div>
-          </ScrollReveal>
           ))}
         </div>
       </div>
 
-      {/* Lightbox Modal */}
-      {activeLightboxItem && (
-        <div
-          className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200"
-          onClick={() => setActiveLightboxItem(null)}
-        >
+      {/* Lightbox Modal Mounted Directly to document.body via Portal: Guarantees zero scroll, zero containing block bugs, instant display right in front */}
+      {activeLightboxItem &&
+        createPortal(
           <div
-            className="relative max-w-5xl w-full max-h-[90vh] flex flex-col items-center"
-            onClick={(e) => e.stopPropagation()}
+            className="fixed inset-0 z-[99999] h-screen w-screen bg-black/95 flex flex-col justify-between p-3 sm:p-6 select-none touch-none overscroll-contain"
+            onClick={() => setActiveLightboxItem(null)}
+            onWheel={(e) => e.stopPropagation()}
+            onTouchMove={(e) => e.stopPropagation()}
           >
-            {/* Close Button */}
-            <button
-              onClick={() => setActiveLightboxItem(null)}
-              className="absolute -top-12 right-0 p-2 text-[#FAF7F2] hover:text-[#C5A880] transition-colors"
-              aria-label="Close Lightbox"
+            {/* Top Bar: Category, Counter & Close Button */}
+            <div
+              className="flex items-center justify-between w-full max-w-6xl mx-auto shrink-0 z-10"
+              onClick={(e) => e.stopPropagation()}
             >
-              <X className="w-7 h-7" />
-            </button>
+              <div className="flex items-center space-x-3">
+                <span className="px-3 py-1 rounded-full text-[10px] sm:text-xs uppercase font-bold tracking-[0.2em] text-[#C5A880] bg-[#18191D] border border-[#3A332A]">
+                  {activeLightboxItem.category}
+                </span>
+                {filteredItems.length > 1 && currentIndex >= 0 && (
+                  <span className="text-xs text-[#A3998C] font-mono">
+                    {currentIndex + 1} / {filteredItems.length}
+                  </span>
+                )}
+              </div>
 
-            <img
-              src={activeLightboxItem.image}
-              alt={activeLightboxItem.title}
-              referrerPolicy="no-referrer"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src =
-                  'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1200&q=80';
-              }}
-              className="max-h-[75vh] w-auto max-w-full rounded-2xl object-contain shadow-2xl border border-[#332E27]"
-            />
+              <button
+                onClick={() => setActiveLightboxItem(null)}
+                className="p-2.5 rounded-full bg-[#18191D] hover:bg-[#2A2621] text-[#FAF7F2] hover:text-[#C5A880] border border-[#3A332A] transition-colors cursor-pointer shadow-lg"
+                aria-label="Close photo preview"
+                title="Close (Esc)"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
 
-            <div className="mt-4 text-center">
-              <span className="text-xs uppercase font-bold tracking-[0.25em] text-[#C5A880]">
-                {activeLightboxItem.category}
-              </span>
-              <h3 className="font-serif text-2xl text-[#FAF7F2] mt-1">
+            {/* Main Visual Display: Exactly centered in viewport */}
+            <div
+              className="flex-1 min-h-0 w-full max-w-6xl mx-auto flex items-center justify-center relative my-2 px-2 sm:px-14"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Previous Photo Button */}
+              {filteredItems.length > 1 && (
+                <button
+                  onClick={handlePrev}
+                  className="absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 z-20 p-2.5 sm:p-3 rounded-full bg-[#18191D]/90 hover:bg-[#2A2621] text-[#FAF7F2] hover:text-[#C5A880] border border-[#3A332A] transition-colors cursor-pointer shadow-2xl"
+                  aria-label="Previous photo"
+                  title="Previous photo (Left arrow)"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+              )}
+
+              {/* Photo: Bounded to viewport, instant render right in front */}
+              <div className="w-full h-full flex items-center justify-center p-1">
+                <img
+                  key={activeLightboxItem.id}
+                  src={activeLightboxItem.image}
+                  alt={activeLightboxItem.title}
+                  referrerPolicy="no-referrer"
+                  decoding="async"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src =
+                      'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1200&q=80';
+                  }}
+                  className="max-h-full max-w-full w-auto h-auto object-contain rounded-xl sm:rounded-2xl shadow-2xl border border-[#3A332A]"
+                />
+              </div>
+
+              {/* Next Photo Button */}
+              {filteredItems.length > 1 && (
+                <button
+                  onClick={handleNext}
+                  className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 z-20 p-2.5 sm:p-3 rounded-full bg-[#18191D]/90 hover:bg-[#2A2621] text-[#FAF7F2] hover:text-[#C5A880] border border-[#3A332A] transition-colors cursor-pointer shadow-2xl"
+                  aria-label="Next photo"
+                  title="Next photo (Right arrow)"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
+              )}
+            </div>
+
+            {/* Compact Caption Footer */}
+            <div
+              className="w-full max-w-3xl mx-auto text-center shrink-0 z-10 px-4"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h3 className="font-serif text-lg sm:text-2xl text-[#FAF7F2] font-normal truncate">
                 {activeLightboxItem.title}
               </h3>
-              <p className="text-sm text-[#A3998C] font-light mt-1 max-w-xl mx-auto">
-                {activeLightboxItem.description}
-              </p>
+              {activeLightboxItem.description && (
+                <p className="text-xs sm:text-sm text-[#A3998C] font-light mt-0.5 line-clamp-1">
+                  {activeLightboxItem.description}
+                </p>
+              )}
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </section>
   );
 }

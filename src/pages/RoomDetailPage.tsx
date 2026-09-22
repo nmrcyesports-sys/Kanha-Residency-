@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   ArrowLeft,
   Users,
@@ -11,7 +12,10 @@ import {
   Sparkles,
   ArrowRight,
   Eye,
+  ZoomIn,
+  X,
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import type { Room } from '../types';
 import { useBooking } from '../context/BookingContext';
 
@@ -25,6 +29,18 @@ export function RoomDetailPage({ room, onNavigate }: RoomDetailPageProps) {
   const [selectedImage, setSelectedImage] = useState<string>(
     room?.featured_image || 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200&q=85'
   );
+  const [isPhotoPopOpen, setIsPhotoPopOpen] = useState(false);
+
+  useEffect(() => {
+    if (isPhotoPopOpen) {
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+      };
+    }
+  }, [isPhotoPopOpen]);
 
   if (!room) {
     return (
@@ -85,15 +101,24 @@ export function RoomDetailPage({ room, onNavigate }: RoomDetailPageProps) {
 
         {/* Gallery Grid & Main Display */}
         <div className="space-y-4 mb-14">
-          <div className="relative h-[400px] sm:h-[550px] w-full rounded-3xl overflow-hidden bg-[#141518] border border-[#2D2822]">
+          <div
+            onClick={() => setIsPhotoPopOpen(true)}
+            className="group relative h-[400px] sm:h-[550px] w-full rounded-3xl overflow-hidden bg-[#141518] border border-[#2D2822] cursor-pointer hover:border-[#C5A880]/60 transition-all duration-300"
+          >
             <img
               src={selectedImage}
               alt={room.name}
-              className="w-full h-full object-cover transition-all duration-500"
+              className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0D0E10]/70 via-transparent to-transparent pointer-events-none" />
-            <div className="absolute bottom-6 left-6 text-xs text-[#E5C79E] bg-[#121316]/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-[#3A342B]">
-              Photography of {room.name} at Kanha Residency
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0D0E10]/80 via-transparent to-transparent pointer-events-none" />
+            
+            <div className="absolute top-6 right-6 p-2.5 rounded-full bg-[#121316]/90 text-[#C5A880] border border-[#3A332A] backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-xl">
+              <ZoomIn className="w-5 h-5" />
+            </div>
+
+            <div className="absolute bottom-6 left-6 text-xs text-[#E5C79E] bg-[#121316]/90 backdrop-blur-md px-4 py-2 rounded-full border border-[#3A342B] flex items-center space-x-2">
+              <span>Photography of {room.name}</span>
+              <span className="text-[#A3998C]">• Click to expand</span>
             </div>
           </div>
 
@@ -104,9 +129,9 @@ export function RoomDetailPage({ room, onNavigate }: RoomDetailPageProps) {
                 <button
                   key={idx}
                   onClick={() => setSelectedImage(img)}
-                  className={`relative w-24 h-20 rounded-xl overflow-hidden shrink-0 border-2 transition-all ${
+                  className={`relative w-24 h-20 rounded-xl overflow-hidden shrink-0 border-2 transition-all cursor-pointer ${
                     selectedImage === img
-                      ? 'border-[#C5A880] scale-105'
+                      ? 'border-[#C5A880] scale-105 shadow-md shadow-[#C5A880]/20'
                       : 'border-[#2D2822] opacity-60 hover:opacity-100'
                   }`}
                 >
@@ -116,6 +141,55 @@ export function RoomDetailPage({ room, onNavigate }: RoomDetailPageProps) {
             </div>
           )}
         </div>
+
+        {/* Room Photo Pop-out Lightbox */}
+        {isPhotoPopOpen &&
+          createPortal(
+            <div
+              onClick={() => setIsPhotoPopOpen(false)}
+              className="fixed inset-0 z-[99999] h-screen w-screen bg-black/95 flex flex-col justify-between p-4 sm:p-8 select-none touch-none overscroll-contain"
+            >
+              {/* Top Header */}
+              <div
+                className="flex items-center justify-between w-full max-w-6xl mx-auto shrink-0 z-10"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <span className="px-3.5 py-1.5 rounded-full text-xs font-serif uppercase tracking-widest text-[#C5A880] bg-[#18191D] border border-[#3A332A]">
+                  {room.name} Photography
+                </span>
+                <button
+                  onClick={() => setIsPhotoPopOpen(false)}
+                  className="p-2.5 rounded-full bg-[#18191D] text-[#FAF7F2] hover:text-[#C5A880] border border-[#3A332A] cursor-pointer shadow-lg transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              {/* Centered Image directly in front */}
+              <div
+                className="flex-1 min-h-0 w-full max-w-6xl mx-auto flex items-center justify-center p-2 sm:p-6"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <img
+                  src={selectedImage}
+                  alt={room.name}
+                  decoding="async"
+                  className="max-h-full max-w-full w-auto h-auto object-contain rounded-2xl shadow-2xl border border-[#3A332A]"
+                />
+              </div>
+
+              {/* Caption */}
+              <div
+                className="text-center shrink-0 z-10"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <p className="text-xs text-[#A3998C] font-light">
+                  Click anywhere or press Esc to close
+                </p>
+              </div>
+            </div>,
+            document.body
+          )}
 
         {/* Main Content Grid: Left specs, Right Sticky Book Box */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
