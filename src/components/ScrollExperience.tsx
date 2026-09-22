@@ -117,7 +117,7 @@ export function ScrollReveal({
   delay = 0,
   direction = 'up',
   className = '',
-  distance = 35,
+  distance = 20,
 }: ScrollRevealProps) {
   const getInitialPosition = () => {
     switch (direction) {
@@ -140,9 +140,9 @@ export function ScrollReveal({
     <motion.div
       initial={initial}
       whileInView={{ opacity: 1, x: 0, y: 0 }}
-      viewport={{ once: true, margin: '-60px' }}
+      viewport={{ once: true, margin: '0px', amount: 0.05 }}
       transition={{
-        duration: 0.8,
+        duration: 0.5,
         delay,
         ease: [0.16, 1, 0.3, 1],
       }}

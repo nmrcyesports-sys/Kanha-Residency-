@@ -377,6 +377,15 @@ async function startServer() {
     }
   });
 
+  app.delete('/api/reviews/:id', (req, res) => {
+    try {
+      db.deleteReview(req.params.id);
+      res.json({ success: true });
+    } catch (err: any) {
+      res.status(400).json({ error: err.message });
+    }
+  });
+
   // -------------------------------------------------------------
   // ENQUIRIES / CONTACT API
   // -------------------------------------------------------------

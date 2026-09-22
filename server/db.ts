@@ -1127,6 +1127,12 @@ Phone: +91 98970 12345`;
     return rev;
   }
 
+  deleteReview(reviewId: string) {
+    this.data.reviews = this.data.reviews.filter((r) => r.id !== reviewId);
+    this.saveData();
+    return true;
+  }
+
   // --- Enquiries ---
   getEnquiries() {
     return this.data.enquiries.sort(

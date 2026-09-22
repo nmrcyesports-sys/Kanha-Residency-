@@ -30,6 +30,8 @@ import {
   TrendingUp,
   Printer,
   Send,
+  Star,
+  ArrowRight,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
@@ -139,6 +141,10 @@ export function AdminLayout({ onNavigate }: AdminLayoutProps) {
   const [newGalleryImage, setNewGalleryImage] = useState('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1000&q=80');
   const [newGalleryDesc, setNewGalleryDesc] = useState('');
 
+  // Filters for Reviews & Gallery
+  const [reviewStatusFilter, setReviewStatusFilter] = useState<'All' | 'Approved' | 'Pending' | 'Rejected'>('All');
+  const [galleryCategoryFilter, setGalleryCategoryFilter] = useState<string>('All');
+
   const refreshAllData = async () => {
     try {
       const [
@@ -211,6 +217,17 @@ export function AdminLayout({ onNavigate }: AdminLayoutProps) {
       setReviews((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
     } catch (err: any) {
       alert(err.message);
+    }
+  };
+
+  const handleDeleteReview = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this guest review?')) return;
+    try {
+      await api.deleteReview(id);
+      setReviews((prev) => prev.filter((r) => r.id !== id));
+      refreshAllData();
+    } catch (err: any) {
+      alert(err.message || 'Failed to delete review');
     }
   };
 
@@ -378,13 +395,13 @@ export function AdminLayout({ onNavigate }: AdminLayoutProps) {
           <nav className="mt-6 space-y-1 text-xs">
             {[
               { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-              { id: 'bookings', label: 'Bookings & PMS', icon: CalendarDays },
+              { id: 'bookings', label: 'Bookings & PMS', icon: CalendarDays, badge: bookings.length },
               { id: 'rooms', label: 'Room Inventory', icon: BedDouble },
               { id: 'availability', label: 'Availability Calendar', icon: Clock },
-              { id: 'enquiries', label: 'Enquiries & CRM', icon: MessageSquare },
+              { id: 'enquiries', label: 'Enquiries & CRM', icon: MessageSquare, badge: enquiries.filter((e) => e.status === 'New').length > 0 ? `${enquiries.filter((e) => e.status === 'New').length} new` : undefined, badgeColor: 'bg-amber-500/20 text-amber-400' },
               { id: 'payments', label: 'Payments & Refunds', icon: CreditCard },
-              { id: 'reviews', label: 'Reviews Moderation', icon: CheckCircle2 },
-              { id: 'gallery', label: 'Gallery CMS', icon: ImageIcon },
+              { id: 'reviews', label: 'Reviews Moderation', icon: CheckCircle2, badge: reviews.filter((r) => r.status === 'Pending').length > 0 ? `${reviews.filter((r) => r.status === 'Pending').length} pending` : `${reviews.length}`, badgeColor: reviews.filter((r) => r.status === 'Pending').length > 0 ? 'bg-amber-500/20 text-amber-400' : 'bg-[#2A2621] text-[#A3998C]' },
+              { id: 'gallery', label: 'Gallery CMS', icon: ImageIcon, badge: gallery.length },
               { id: 'emails', label: 'Email Automation', icon: Mail },
               { id: 'settings', label: 'Site Settings', icon: Settings },
               { id: 'audit', label: 'Audit Trail', icon: FileText },
@@ -396,14 +413,21 @@ export function AdminLayout({ onNavigate }: AdminLayoutProps) {
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id as any)}
-                  className={`w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-medium transition-all text-left cursor-pointer ${
+                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-medium transition-all text-left cursor-pointer ${
                     isActive
                       ? 'bg-[#25211B] text-[#E5C79E] border border-[#C5A880]/40'
                       : 'text-[#A3998C] hover:text-[#FAF7F2] hover:bg-[#1A1C22]'
                   }`}
                 >
-                  <Icon className="w-4 h-4 text-[#C5A880]" />
-                  <span>{item.label}</span>
+                  <div className="flex items-center space-x-3">
+                    <Icon className="w-4 h-4 text-[#C5A880]" />
+                    <span>{item.label}</span>
+                  </div>
+                  {item.badge !== undefined && (
+                    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${item.badgeColor || 'bg-[#2A2621] text-[#A3998C]'}`}>
+                      {item.badge}
+                    </span>
+                  )}
                 </button>
               );
             })}
@@ -680,6 +704,160 @@ export function AdminLayout({ onNavigate }: AdminLayoutProps) {
                         <p className="text-[11px] text-[#A3998C] line-clamp-1">{e.message}</p>
                       </div>
                     ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Executive Hub: Guest Testimonials & Showcase Gallery */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Guest Testimonials Card */}
+                <div className="rounded-3xl bg-[#141518] border border-[#2D2822] p-6 space-y-4">
+                  <div className="flex items-center justify-between pb-3 border-b border-[#25221D]">
+                    <div className="flex items-center space-x-2">
+                      <Star className="w-4 h-4 text-[#C5A880] fill-[#C5A880]" />
+                      <h3 className="font-serif text-lg font-medium text-[#FAF7F2]">
+                        Guest Testimonials & Reviews
+                      </h3>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#25211B] text-[#C5A880] border border-[#C5A880]/30 font-semibold">
+                        {reviews.length} Total
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => setActiveTab('reviews')}
+                      className="text-xs text-[#C5A880] hover:underline flex items-center space-x-1"
+                    >
+                      <span>Moderate Reviews</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </div>
+
+                  {/* Summary Rating Stats */}
+                  <div className="grid grid-cols-3 gap-3 p-3 rounded-xl bg-[#1A1C22] border border-[#25221D] text-center">
+                    <div>
+                      <div className="font-serif text-xl font-bold text-[#E5C79E]">
+                        {reviews.length > 0
+                          ? (reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length).toFixed(1)
+                          : '5.0'} ★
+                      </div>
+                      <div className="text-[10px] text-[#A3998C] uppercase font-semibold">Avg Rating</div>
+                    </div>
+                    <div>
+                      <div className="font-serif text-xl font-bold text-emerald-400">
+                        {reviews.filter((r) => r.status === 'Approved').length}
+                      </div>
+                      <div className="text-[10px] text-[#A3998C] uppercase font-semibold">Live on Site</div>
+                    </div>
+                    <div>
+                      <div className="font-serif text-xl font-bold text-amber-400">
+                        {reviews.filter((r) => r.status === 'Pending').length}
+                      </div>
+                      <div className="text-[10px] text-[#A3998C] uppercase font-semibold">Pending Action</div>
+                    </div>
+                  </div>
+
+                  {/* Quick Reviews List */}
+                  <div className="space-y-3">
+                    {reviews.slice(0, 3).map((r) => (
+                      <div
+                        key={r.id}
+                        className="p-3.5 rounded-xl bg-[#1A1C22] border border-[#25221D] space-y-1 text-xs"
+                      >
+                        <div className="flex justify-between items-center">
+                          <div className="flex items-center space-x-2">
+                            <span className="font-semibold text-[#FAF7F2]">{r.user_name}</span>
+                            <span className="text-[10px] text-[#C5A880]">
+                              {'★'.repeat(r.rating)}
+                            </span>
+                            <span className="text-[10px] text-[#8C8377]">({r.room_name})</span>
+                          </div>
+                          <span
+                            className={`text-[9px] uppercase font-bold px-2 py-0.5 rounded ${
+                              r.status === 'Approved'
+                                ? 'bg-emerald-950/60 text-emerald-300 border border-emerald-800'
+                                : r.status === 'Pending'
+                                ? 'bg-amber-950/60 text-amber-300 border border-amber-800'
+                                : 'bg-rose-950/60 text-rose-300 border border-rose-800'
+                            }`}
+                          >
+                            {r.status}
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-[#FAF7F2] font-medium line-clamp-1">"{r.title}"</p>
+                        <p className="text-[11px] text-[#A3998C] line-clamp-2">{r.review}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Photography & Gallery Card */}
+                <div className="rounded-3xl bg-[#141518] border border-[#2D2822] p-6 space-y-4">
+                  <div className="flex items-center justify-between pb-3 border-b border-[#25221D]">
+                    <div className="flex items-center space-x-2">
+                      <ImageIcon className="w-4 h-4 text-[#C5A880]" />
+                      <h3 className="font-serif text-lg font-medium text-[#FAF7F2]">
+                        Showcase Media & Gallery
+                      </h3>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#25211B] text-[#C5A880] border border-[#C5A880]/30 font-semibold">
+                        {gallery.length} Photos
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => setActiveTab('gallery')}
+                      className="text-xs text-[#C5A880] hover:underline flex items-center space-x-1"
+                    >
+                      <span>Manage Gallery</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </div>
+
+                  {/* Category Breakdown Chips */}
+                  <div className="flex flex-wrap gap-1.5">
+                    {['Property', 'Rooms', 'Interiors', 'Experience', 'Mathura'].map((cat) => {
+                      const count = gallery.filter((g) => g.category.toLowerCase() === cat.toLowerCase()).length;
+                      return (
+                        <span
+                          key={cat}
+                          className="px-2.5 py-1 rounded-lg bg-[#1A1C22] border border-[#25221D] text-[10px] text-[#A3998C] flex items-center space-x-1"
+                        >
+                          <span className="text-[#FAF7F2]">{cat}</span>
+                          <span className="text-[#C5A880] font-bold">({count})</span>
+                        </span>
+                      );
+                    })}
+                  </div>
+
+                  {/* Photo Thumbnails Preview Grid */}
+                  <div className="grid grid-cols-4 gap-2">
+                    {gallery.slice(0, 8).map((g) => (
+                      <div
+                        key={g.id}
+                        className="relative group rounded-xl overflow-hidden aspect-video bg-[#1A1C22] border border-[#25221D]"
+                      >
+                        <img
+                          src={g.image}
+                          alt={g.title}
+                          referrerPolicy="no-referrer"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src =
+                              'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=600&q=80';
+                          }}
+                          className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-1.5">
+                          <span className="text-[9px] text-[#FAF7F2] truncate font-medium">{g.title}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="pt-2 flex items-center justify-between text-xs text-[#A3998C]">
+                    <span>Real-time photo showcase on guest portal</span>
+                    <button
+                      onClick={() => setActiveTab('gallery')}
+                      className="text-[#C5A880] hover:underline font-semibold text-xs"
+                    >
+                      + Add New Photo
+                    </button>
                   </div>
                 </div>
               </div>
@@ -1123,51 +1301,111 @@ export function AdminLayout({ onNavigate }: AdminLayoutProps) {
           {/* TAB: REVIEWS MODERATION */}
           {activeTab === 'reviews' && (
             <div className="space-y-6">
-              <h3 className="font-serif text-xl text-[#FAF7F2]">Guest Testimonials Moderation</h3>
-              <div className="space-y-4">
-                {reviews.map((r) => (
-                  <div
-                    key={r.id}
-                    className="p-5 rounded-2xl bg-[#141518] border border-[#2D2822] flex flex-col sm:flex-row items-start justify-between gap-4"
-                  >
-                    <div className="space-y-1">
-                      <div className="flex items-center space-x-2">
-                        <span className="font-bold text-[#FAF7F2]">{r.user_name}</span>
-                        <span className="text-xs text-[#C5A880]">★ {r.rating} Stars</span>
-                        <span className="text-[10px] text-[#A3998C]">({r.room_name})</span>
-                      </div>
-                      <h4 className="font-serif text-base text-[#FAF7F2]">"{r.title}"</h4>
-                      <p className="text-xs text-[#A3998C]">{r.review}</p>
-                    </div>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#25221D]">
+                <div>
+                  <h3 className="font-serif text-2xl text-[#FAF7F2]">Guest Testimonials Moderation</h3>
+                  <p className="text-xs text-[#A3998C] mt-1">
+                    Review and approve authentic pilgrim feedback before publishing live on the website.
+                  </p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  {(['All', 'Approved', 'Pending', 'Rejected'] as const).map((st) => {
+                    const count = st === 'All' ? reviews.length : reviews.filter((r) => r.status === st).length;
+                    const isActive = reviewStatusFilter === st;
+                    return (
+                      <button
+                        key={st}
+                        onClick={() => setReviewStatusFilter(st)}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center space-x-1.5 ${
+                          isActive
+                            ? 'bg-[#C5A880] text-[#121316] shadow-md shadow-[#C5A880]/20'
+                            : 'bg-[#1A1C22] text-[#A3998C] hover:text-[#FAF7F2] border border-[#2D2822]'
+                        }`}
+                      >
+                        <span>{st}</span>
+                        <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isActive ? 'bg-[#121316]/30 text-[#121316]' : 'bg-[#25211B] text-[#C5A880]'}`}>
+                          {count}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
 
-                    <div className="flex items-center space-x-2 shrink-0">
-                      {r.status === 'Pending' ? (
-                        <>
+              {/* Reviews List */}
+              <div className="space-y-4">
+                {reviews
+                  .filter((r) => reviewStatusFilter === 'All' || r.status === reviewStatusFilter)
+                  .map((r) => (
+                    <div
+                      key={r.id}
+                      className="p-5 rounded-2xl bg-[#141518] border border-[#2D2822] flex flex-col sm:flex-row items-start justify-between gap-4"
+                    >
+                      <div className="space-y-2 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="font-bold text-[#FAF7F2] text-sm">{r.user_name}</span>
+                          <span className="text-xs text-[#C5A880] font-semibold">
+                            {'★'.repeat(r.rating)} ({r.rating}/5)
+                          </span>
+                          <span className="text-[11px] text-[#A3998C] bg-[#1A1C22] px-2 py-0.5 rounded-md border border-[#25221D]">
+                            {r.room_name}
+                          </span>
+                          {r.verified_guest && (
+                            <span className="text-[10px] text-emerald-400 bg-emerald-950/40 border border-emerald-800/60 px-2 py-0.5 rounded-full font-medium flex items-center space-x-1">
+                              <span>✓ Verified Guest</span>
+                            </span>
+                          )}
+                          <span className="text-[10px] text-[#8C8377]">
+                            {new Date(r.created_at).toLocaleDateString()}
+                          </span>
+                        </div>
+
+                        <h4 className="font-serif text-base font-semibold text-[#FAF7F2]">"{r.title}"</h4>
+                        <p className="text-xs text-[#D8CFBF] leading-relaxed max-w-3xl">{r.review}</p>
+                      </div>
+
+                      {/* Moderation Controls */}
+                      <div className="flex items-center space-x-2 shrink-0 pt-1">
+                        {r.status !== 'Approved' && (
                           <button
                             onClick={() => handleUpdateReviewStatus(r.id, 'Approved')}
-                            className="px-3 py-1.5 rounded-lg bg-emerald-900/60 border border-emerald-700 text-emerald-300 text-xs font-semibold"
+                            className="px-3 py-1.5 rounded-lg bg-emerald-900/60 border border-emerald-700 text-emerald-300 text-xs font-semibold hover:bg-emerald-800 transition-colors"
                           >
                             Approve
                           </button>
+                        )}
+                        {r.status !== 'Pending' && (
+                          <button
+                            onClick={() => handleUpdateReviewStatus(r.id, 'Pending')}
+                            className="px-3 py-1.5 rounded-lg bg-amber-900/40 border border-amber-700/60 text-amber-300 text-xs font-semibold hover:bg-amber-800/60 transition-colors"
+                          >
+                            Mark Pending
+                          </button>
+                        )}
+                        {r.status !== 'Rejected' && (
                           <button
                             onClick={() => handleUpdateReviewStatus(r.id, 'Rejected')}
-                            className="px-3 py-1.5 rounded-lg bg-rose-900/60 border border-rose-700 text-rose-300 text-xs font-semibold"
+                            className="px-3 py-1.5 rounded-lg bg-rose-900/60 border border-rose-700 text-rose-300 text-xs font-semibold hover:bg-rose-800 transition-colors"
                           >
                             Reject
                           </button>
-                        </>
-                      ) : (
-                        <span
-                          className={`text-xs px-2.5 py-1 rounded-full font-bold uppercase ${
-                            r.status === 'Approved' ? 'text-emerald-400' : 'text-rose-400'
-                          }`}
+                        )}
+                        <button
+                          onClick={() => handleDeleteReview(r.id)}
+                          className="p-1.5 rounded-lg bg-[#241b1b] border border-rose-900/40 text-rose-400 hover:bg-rose-950 hover:text-rose-200 transition-colors"
+                          title="Delete Review"
                         >
-                          {r.status}
-                        </span>
-                      )}
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
+                  ))}
+
+                {reviews.filter((r) => reviewStatusFilter === 'All' || r.status === reviewStatusFilter).length === 0 && (
+                  <div className="text-center py-12 rounded-2xl bg-[#141518] border border-[#2D2822]">
+                    <p className="text-sm text-[#A3998C]">No testimonials found in "{reviewStatusFilter}" category.</p>
                   </div>
-                ))}
+                )}
               </div>
             </div>
           )}
@@ -1177,7 +1415,10 @@ export function AdminLayout({ onNavigate }: AdminLayoutProps) {
             <div className="space-y-8">
               {/* Add Photo Form */}
               <div className="p-6 rounded-3xl bg-[#141518] border border-[#2D2822]">
-                <h3 className="font-serif text-xl text-[#FAF7F2] mb-4">Add Photo to Gallery</h3>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-serif text-xl text-[#FAF7F2]">Add Photo to Gallery</h3>
+                  <span className="text-xs text-[#A3998C]">{gallery.length} Photos Live</span>
+                </div>
                 <form onSubmit={handleAddGalleryItem} className="grid grid-cols-1 sm:grid-cols-4 gap-4">
                   <div>
                     <label className="block text-[10px] uppercase font-bold text-[#A3998C] mb-1">
@@ -1231,26 +1472,62 @@ export function AdminLayout({ onNavigate }: AdminLayoutProps) {
                 </form>
               </div>
 
+              {/* Category Filter Pills */}
+              <div className="flex flex-wrap items-center gap-2">
+                {['All', 'Property', 'Rooms', 'Interiors', 'Experience', 'Mathura'].map((cat) => {
+                  const count = cat === 'All' ? gallery.length : gallery.filter((g) => g.category.toLowerCase() === cat.toLowerCase()).length;
+                  const isActive = galleryCategoryFilter === cat;
+                  return (
+                    <button
+                      key={cat}
+                      onClick={() => setGalleryCategoryFilter(cat)}
+                      className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center space-x-1.5 ${
+                        isActive
+                          ? 'bg-[#C5A880] text-[#121316] shadow-md shadow-[#C5A880]/20'
+                          : 'bg-[#141518] text-[#A3998C] hover:text-[#FAF7F2] border border-[#2D2822]'
+                      }`}
+                    >
+                      <span>{cat}</span>
+                      <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isActive ? 'bg-[#121316]/30 text-[#121316]' : 'bg-[#25211B] text-[#C5A880]'}`}>
+                        {count}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
               {/* Gallery Items Grid */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                {gallery.map((g) => (
-                  <div
-                    key={g.id}
-                    className="relative group rounded-2xl overflow-hidden bg-[#141518] border border-[#2D2822]"
-                  >
-                    <img src={g.image} alt={g.title} className="w-full h-44 object-cover" />
-                    <div className="p-3 text-xs">
-                      <div className="font-semibold text-[#FAF7F2] truncate">{g.title}</div>
-                      <div className="text-[10px] text-[#C5A880] uppercase">{g.category}</div>
-                    </div>
-                    <button
-                      onClick={() => handleDeleteGallery(g.id)}
-                      className="absolute top-2 right-2 p-1.5 rounded-full bg-red-950/80 text-red-300 opacity-0 group-hover:opacity-100 transition-opacity"
+                {gallery
+                  .filter((g) => galleryCategoryFilter === 'All' || g.category.toLowerCase() === galleryCategoryFilter.toLowerCase())
+                  .map((g) => (
+                    <div
+                      key={g.id}
+                      className="relative group rounded-2xl overflow-hidden bg-[#141518] border border-[#2D2822]"
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                ))}
+                      <img
+                        src={g.image}
+                        alt={g.title}
+                        referrerPolicy="no-referrer"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src =
+                            'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=600&q=80';
+                        }}
+                        className="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="p-3 text-xs bg-gradient-to-t from-[#141518] via-[#141518]/90 to-transparent">
+                        <div className="font-semibold text-[#FAF7F2] truncate">{g.title}</div>
+                        <div className="text-[10px] text-[#C5A880] uppercase tracking-wider font-semibold">{g.category}</div>
+                      </div>
+                      <button
+                        onClick={() => handleDeleteGallery(g.id)}
+                        className="absolute top-2 right-2 p-1.5 rounded-full bg-red-950/90 text-red-300 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-900 shadow-lg"
+                        title="Delete Image"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  ))}
               </div>
             </div>
           )}

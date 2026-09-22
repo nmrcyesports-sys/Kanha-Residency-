@@ -339,6 +339,14 @@ export const api = {
     return res.json();
   },
 
+  async deleteReview(id: string): Promise<void> {
+    const res = await fetch(`${API_BASE}/reviews/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+    if (!res.ok) throw new Error('Failed to delete review');
+  },
+
   // Enquiries
   async submitEnquiry(data: { name: string; email: string; phone?: string; message: string }): Promise<Enquiry> {
     const res = await fetch(`${API_BASE}/enquiries`, {

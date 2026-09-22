@@ -32,11 +32,27 @@ export function Navbar({ currentPath, onNavigate }: NavbarProps) {
     { label: 'Rooms', path: '/rooms' },
     { label: 'Experience', path: '/experience' },
     { label: 'Gallery', path: '/gallery' },
+    { label: 'Testimonials', path: '/#reviews-section' },
     { label: 'Location', path: '/location' },
     { label: 'Contact', path: '/contact' },
   ];
 
   const handleLinkClick = (path: string) => {
+    if (path.startsWith('/#')) {
+      const targetId = path.replace('/#', '');
+      if (currentPath !== '/') {
+        onNavigate('/');
+        setTimeout(() => {
+          const el = document.getElementById(targetId);
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }, 200);
+      } else {
+        const el = document.getElementById(targetId);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }
+      setMobileMenuOpen(false);
+      return;
+    }
     onNavigate(path);
     setMobileMenuOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
