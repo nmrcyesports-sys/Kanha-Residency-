@@ -9,6 +9,7 @@ import { ContactSection } from '../components/ContactSection';
 import { ScrollReveal } from '../components/ScrollExperience';
 import { useBooking } from '../context/BookingContext';
 import { api } from '../services/api';
+import { DEFAULT_ROOMS } from '../data/defaultRooms';
 import type { Room } from '../types';
 import { ArrowRight, Sparkles, Shield, Award, HeartHandshake } from 'lucide-react';
 
@@ -18,11 +19,23 @@ interface HomePageProps {
 }
 
 export function HomePage({ onNavigate, onSelectRoom }: HomePageProps) {
-  const [rooms, setRooms] = useState<Room[]>([]);
+  const [rooms, setRooms] = useState<Room[]>(DEFAULT_ROOMS);
   const { openBookingModal } = useBooking();
 
   useEffect(() => {
-    api.getRooms().then(setRooms).catch(console.warn);
+    let isMounted = true;
+    api.getRooms()
+      .then((data) => {
+        if (isMounted && Array.isArray(data) && data.length > 0) {
+          setRooms(data);
+        }
+      })
+      .catch((err) => {
+        console.warn('Rooms load fallback:', err);
+      });
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handleBookRoom = (room: Room) => {
@@ -30,6 +43,9 @@ export function HomePage({ onNavigate, onSelectRoom }: HomePageProps) {
   };
 
   const handleViewDetails = (room: Room) => {
+    try {
+      localStorage.setItem('kr_selected_room', JSON.stringify(room));
+    } catch {}
     onSelectRoom(room);
     onNavigate('/room-detail');
   };
@@ -119,7 +135,7 @@ export function HomePage({ onNavigate, onSelectRoom }: HomePageProps) {
           </ScrollReveal>
 
           {/* Rooms Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6 sm:gap-8">
             {rooms.slice(0, 4).map((room, idx) => (
               <ScrollReveal key={room.id} delay={idx * 0.1} direction="up">
                 <RoomCard

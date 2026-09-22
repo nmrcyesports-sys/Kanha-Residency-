@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { RoomCard } from '../components/RoomCard';
 import { useBooking } from '../context/BookingContext';
 import { api } from '../services/api';
+import { DEFAULT_ROOMS } from '../data/defaultRooms';
 import type { Room } from '../types';
 import { Filter, Sparkles, CheckCircle2 } from 'lucide-react';
 
@@ -11,19 +12,35 @@ interface RoomsPageProps {
 }
 
 export function RoomsPage({ onSelectRoom, onNavigate }: RoomsPageProps) {
-  const [rooms, setRooms] = useState<Room[]>([]);
+  const [rooms, setRooms] = useState<Room[]>(DEFAULT_ROOMS);
   const [selectedGuests, setSelectedGuests] = useState<number | 'all'>('all');
   const [selectedBed, setSelectedBed] = useState<string>('all');
   const [maxPrice, setMaxPrice] = useState<number>(10000);
   const { openBookingModal } = useBooking();
 
   useEffect(() => {
-    api.getRooms().then(setRooms).catch(console.warn);
+    let isMounted = true;
+    api.getRooms()
+      .then((data) => {
+        if (isMounted && Array.isArray(data) && data.length > 0) {
+          setRooms(data);
+        }
+      })
+      .catch((err) => {
+        console.warn('Rooms load fallback active:', err);
+      });
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const filteredRooms = rooms.filter((r) => {
     if (selectedGuests !== 'all' && r.max_guests < selectedGuests) return false;
-    if (selectedBed !== 'all' && !r.bed_type.toLowerCase().includes(selectedBed.toLowerCase())) return false;
+    if (selectedBed !== 'all') {
+      const bed = r.bed_type.toLowerCase();
+      if (selectedBed === 'king' && !bed.includes('king')) return false;
+      if (selectedBed === 'queen' && !bed.includes('queen') && !bed.includes('twin') && !bed.includes('double')) return false;
+    }
     if (r.price > maxPrice) return false;
     return true;
   });
@@ -73,8 +90,8 @@ export function RoomsPage({ onSelectRoom, onNavigate }: RoomsPageProps) {
               className="bg-[#1C1E24] border border-[#332E27] rounded-xl px-3 py-2 text-xs text-[#FAF7F2] focus:outline-none focus:border-[#C5A880]"
             >
               <option value="all">All Bed Configurations</option>
-              <option value="king">King Bed</option>
-              <option value="twin">Twin / Double Beds</option>
+              <option value="king">King Bed Suites</option>
+              <option value="queen">Queen / Family Beds</option>
             </select>
 
             {/* Price Slider */}
@@ -107,12 +124,17 @@ export function RoomsPage({ onSelectRoom, onNavigate }: RoomsPageProps) {
         </div>
 
         {/* Room Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6 sm:gap-8 mb-16">
           {filteredRooms.map((room) => (
             <RoomCard
               key={room.id}
               room={room}
               onViewDetails={(r) => {
+                try {
+                  localStorage.setItem('kr_selected_room', JSON.stringify(r));
+                } catch {
+                  // ignore
+                }
                 onSelectRoom(r);
                 onNavigate('/room-detail');
               }}

@@ -25,9 +25,25 @@ function AppContent() {
   const [currentPath, setCurrentPath] = useState<string>(() => {
     return window.location.pathname || '/';
   });
-  const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
+  const [selectedRoom, setSelectedRoom] = useState<Room | null>(() => {
+    try {
+      const saved = localStorage.getItem('kr_selected_room');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.id) return parsed;
+      }
+    } catch {}
+    return null;
+  });
   const { openBookingModal } = useBooking();
   const { user, isAdmin, isManager } = useAuth();
+
+  const handleSelectRoom = (room: Room) => {
+    setSelectedRoom(room);
+    try {
+      localStorage.setItem('kr_selected_room', JSON.stringify(room));
+    } catch {}
+  };
 
   const navigate = (path: string) => {
     window.history.pushState({}, '', path);
@@ -47,8 +63,12 @@ function AppContent() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
+  // Clean path without query strings, hashes, or trailing slashes
+  const rawPath = currentPath.split('?')[0].split('#')[0] || '/';
+  const normalizedPath = rawPath.endsWith('/') && rawPath.length > 1 ? rawPath.slice(0, -1) : rawPath;
+
   // Admin Route Protection
-  const isAdminRoute = currentPath.startsWith('/admin');
+  const isAdminRoute = normalizedPath.startsWith('/admin');
 
   return (
     <div className="min-h-screen bg-[#0D0E10] text-[#E8E2D9] flex flex-col font-sans relative">
@@ -57,14 +77,14 @@ function AppContent() {
 
       {/* Show Navbar on all public pages */}
       {!isAdminRoute && (
-        <Navbar currentPath={currentPath} onNavigate={navigate} />
+        <Navbar currentPath={normalizedPath} onNavigate={navigate} />
       )}
 
       {/* Main Page Routing */}
       <main className="flex-1 overflow-x-hidden">
         <AnimatePresence mode="wait">
           <motion.div
-            key={currentPath}
+            key={normalizedPath}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -73,44 +93,46 @@ function AppContent() {
           >
             {isAdminRoute ? (
               <AdminLayout onNavigate={navigate} />
-            ) : currentPath === '/rooms' ? (
+            ) : normalizedPath === '/rooms' ? (
               <RoomsPage
-                onSelectRoom={(r) => setSelectedRoom(r)}
+                onSelectRoom={handleSelectRoom}
                 onNavigate={navigate}
               />
-            ) : currentPath === '/room-detail' ? (
+            ) : normalizedPath === '/room-detail' ? (
               <RoomDetailPage
                 room={selectedRoom}
                 onNavigate={navigate}
               />
-            ) : currentPath === '/experience' ? (
+            ) : normalizedPath === '/experience' ? (
               <ExperiencePage
                 onBookStay={() => openBookingModal()}
               />
-            ) : currentPath === '/gallery' ? (
+            ) : normalizedPath === '/gallery' ? (
               <GalleryPage />
-            ) : currentPath === '/location' ? (
+            ) : normalizedPath === '/location' ? (
               <LocationPage />
-            ) : currentPath === '/contact' ? (
+            ) : normalizedPath === '/contact' ? (
               <ContactPage />
-            ) : currentPath === '/login' ? (
+            ) : normalizedPath === '/login' ? (
               <AuthPages initialMode="login" onNavigate={navigate} />
-            ) : currentPath === '/register' ? (
+            ) : normalizedPath === '/register' ? (
               <AuthPages initialMode="register" onNavigate={navigate} />
-            ) : currentPath === '/account' ? (
+            ) : normalizedPath === '/account' ? (
               <GuestAccountPage onNavigate={navigate} />
-            ) : currentPath === '/terms' ? (
+            ) : normalizedPath === '/terms' ? (
               <LegalPages initialTab="terms" />
-            ) : currentPath === '/privacy' ? (
+            ) : normalizedPath === '/privacy' ? (
               <LegalPages initialTab="privacy" />
-            ) : currentPath === '/cancellation' ? (
+            ) : normalizedPath === '/cancellation' ? (
               <LegalPages initialTab="cancellation" />
-            ) : currentPath === '/cookies' ? (
+            ) : normalizedPath === '/cookies' ? (
               <LegalPages initialTab="cookies" />
+            ) : normalizedPath === '/disclaimer' ? (
+              <LegalPages initialTab="disclaimer" />
             ) : (
               <HomePage
                 onNavigate={navigate}
-                onSelectRoom={(r) => setSelectedRoom(r)}
+                onSelectRoom={handleSelectRoom}
               />
             )}
           </motion.div>

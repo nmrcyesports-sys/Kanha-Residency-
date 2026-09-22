@@ -23,6 +23,7 @@ import {
 import { useBooking } from '../context/BookingContext';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
+import { DEFAULT_ROOMS } from '../data/defaultRooms';
 import type { Room, PaymentMethod, EmailLog } from '../types';
 import { InvoiceModal } from './InvoiceModal';
 import { EmailPreviewModal } from './EmailPreviewModal';
@@ -46,7 +47,7 @@ export function BookingModal() {
 
   const { user } = useAuth();
 
-  const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
+  const [availableRooms, setAvailableRooms] = useState<Room[]>(DEFAULT_ROOMS);
   const [loadingRooms, setLoadingRooms] = useState(false);
   const [couponInput, setCouponInput] = useState('');
   const [couponLoading, setCouponLoading] = useState(false);

@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import type { Room } from '../types';
+import { DEFAULT_ROOMS } from '../data/defaultRooms';
 import { useBooking } from '../context/BookingContext';
 
 interface RoomDetailPageProps {
@@ -26,43 +27,54 @@ interface RoomDetailPageProps {
 
 export function RoomDetailPage({ room, onNavigate }: RoomDetailPageProps) {
   const { openBookingModal } = useBooking();
-  const [selectedImage, setSelectedImage] = useState<string>(
-    room?.featured_image || 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200&q=85'
-  );
+
+  // Resolve active room from prop, localStorage, URL query, or default room
+  const activeRoom: Room = (() => {
+    if (room) return room;
+    try {
+      const saved = localStorage.getItem('kr_selected_room');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.id && parsed.name) return parsed as Room;
+      }
+    } catch {}
+    const params = new URLSearchParams(window.location.search);
+    const idFromQuery = params.get('id');
+    if (idFromQuery) {
+      const match = DEFAULT_ROOMS.find((r) => r.id === idFromQuery || r.slug === idFromQuery);
+      if (match) return match;
+    }
+    return DEFAULT_ROOMS[0];
+  })();
+
+  const [selectedImage, setSelectedImage] = useState<string>(activeRoom.featured_image);
   const [isPhotoPopOpen, setIsPhotoPopOpen] = useState(false);
+
+  useEffect(() => {
+    if (activeRoom) {
+      setSelectedImage(activeRoom.featured_image);
+      try {
+        localStorage.setItem('kr_selected_room', JSON.stringify(activeRoom));
+      } catch {}
+    }
+  }, [activeRoom.id]);
 
   useEffect(() => {
     if (isPhotoPopOpen) {
       document.body.style.overflow = 'hidden';
-      document.documentElement.style.overflow = 'hidden';
       return () => {
         document.body.style.overflow = '';
-        document.documentElement.style.overflow = '';
       };
     }
   }, [isPhotoPopOpen]);
 
-  if (!room) {
-    return (
-      <div className="min-h-screen bg-[#0D0E10] text-[#FAF7F2] pt-40 pb-20 text-center">
-        <h2 className="font-serif text-3xl mb-4">No Suite Selected</h2>
-        <button
-          onClick={() => onNavigate('/rooms')}
-          className="text-xs text-[#C5A880] underline uppercase tracking-wider"
-        >
-          Return to Room Collection
-        </button>
-      </div>
-    );
-  }
-
-  const gallery = [room.featured_image, ...(room.images || [])];
+  const gallery = [activeRoom.featured_image, ...(activeRoom.images || [])];
 
   const formattedPrice = new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR',
     maximumFractionDigits: 0,
-  }).format(room.price);
+  }).format(activeRoom.price);
 
   return (
     <div className="bg-[#0D0E10] text-[#FAF7F2] min-h-screen pt-28 pb-24">
@@ -77,7 +89,7 @@ export function RoomDetailPage({ room, onNavigate }: RoomDetailPageProps) {
             <span>Rooms Collection</span>
           </button>
           <span>/</span>
-          <span className="text-[#C5A880] font-medium">{room.name}</span>
+          <span className="text-[#C5A880] font-medium">{activeRoom.name}</span>
         </div>
 
         {/* Top Header */}
@@ -87,7 +99,7 @@ export function RoomDetailPage({ room, onNavigate }: RoomDetailPageProps) {
               Kanha Residency · Mathura
             </span>
             <h1 className="font-serif text-3xl sm:text-5xl font-normal text-[#FAF7F2]">
-              {room.name}
+              {activeRoom.name}
             </h1>
           </div>
 
@@ -107,7 +119,7 @@ export function RoomDetailPage({ room, onNavigate }: RoomDetailPageProps) {
           >
             <img
               src={selectedImage}
-              alt={room.name}
+              alt={activeRoom.name}
               className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0D0E10]/80 via-transparent to-transparent pointer-events-none" />
@@ -117,7 +129,7 @@ export function RoomDetailPage({ room, onNavigate }: RoomDetailPageProps) {
             </div>
 
             <div className="absolute bottom-6 left-6 text-xs text-[#E5C79E] bg-[#121316]/90 backdrop-blur-md px-4 py-2 rounded-full border border-[#3A342B] flex items-center space-x-2">
-              <span>Photography of {room.name}</span>
+              <span>Photography of {activeRoom.name}</span>
               <span className="text-[#A3998C]">• Click to expand</span>
             </div>
           </div>
@@ -155,7 +167,7 @@ export function RoomDetailPage({ room, onNavigate }: RoomDetailPageProps) {
                 onClick={(e) => e.stopPropagation()}
               >
                 <span className="px-3.5 py-1.5 rounded-full text-xs font-serif uppercase tracking-widest text-[#C5A880] bg-[#18191D] border border-[#3A332A]">
-                  {room.name} Photography
+                  {activeRoom.name} Photography
                 </span>
                 <button
                   onClick={() => setIsPhotoPopOpen(false)}
@@ -172,7 +184,7 @@ export function RoomDetailPage({ room, onNavigate }: RoomDetailPageProps) {
               >
                 <img
                   src={selectedImage}
-                  alt={room.name}
+                  alt={activeRoom.name}
                   decoding="async"
                   className="max-h-full max-w-full w-auto h-auto object-contain rounded-2xl shadow-2xl border border-[#3A332A]"
                 />
@@ -200,17 +212,17 @@ export function RoomDetailPage({ room, onNavigate }: RoomDetailPageProps) {
               <div>
                 <Users className="w-5 h-5 text-[#C5A880] mx-auto mb-1.5" />
                 <div className="text-[10px] text-[#A3998C] uppercase tracking-wider">Occupancy</div>
-                <div className="text-sm font-semibold text-[#FAF7F2]">{room.max_guests} Guests</div>
+                <div className="text-sm font-semibold text-[#FAF7F2]">{activeRoom.max_guests} Guests</div>
               </div>
               <div>
                 <Bed className="w-5 h-5 text-[#C5A880] mx-auto mb-1.5" />
                 <div className="text-[10px] text-[#A3998C] uppercase tracking-wider">Bed Type</div>
-                <div className="text-sm font-semibold text-[#FAF7F2]">{room.bed_type}</div>
+                <div className="text-sm font-semibold text-[#FAF7F2]">{activeRoom.bed_type}</div>
               </div>
               <div>
                 <Maximize2 className="w-5 h-5 text-[#C5A880] mx-auto mb-1.5" />
                 <div className="text-[10px] text-[#A3998C] uppercase tracking-wider">Living Area</div>
-                <div className="text-sm font-semibold text-[#FAF7F2]">{room.room_size}</div>
+                <div className="text-sm font-semibold text-[#FAF7F2]">{activeRoom.room_size}</div>
               </div>
             </div>
 
@@ -218,7 +230,7 @@ export function RoomDetailPage({ room, onNavigate }: RoomDetailPageProps) {
             <div className="space-y-4">
               <h3 className="font-serif text-2xl text-[#FAF7F2]">The Experience</h3>
               <p className="text-sm text-[#C4B8A9] font-light leading-relaxed">
-                {room.description || room.short_description}
+                {activeRoom.description || activeRoom.short_description}
               </p>
               <p className="text-sm text-[#C4B8A9] font-light leading-relaxed">
                 Positioned in Mathura's tranquil Techman Nilgiri quarter, this suite offers a calm retreat after visiting Shri Krishna Janmabhoomi and attending the holy evening Yamuna Aarti at Vishram Ghat.
@@ -229,7 +241,7 @@ export function RoomDetailPage({ room, onNavigate }: RoomDetailPageProps) {
             <div className="space-y-6">
               <h3 className="font-serif text-2xl text-[#FAF7F2]">Room Amenities</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {room.amenities.map((amenity) => (
+                {activeRoom.amenities.map((amenity) => (
                   <div
                     key={amenity}
                     className="flex items-center space-x-3 p-3.5 rounded-xl bg-[#15171D] border border-[#262420]"
@@ -276,7 +288,7 @@ export function RoomDetailPage({ room, onNavigate }: RoomDetailPageProps) {
 
               <div className="pt-4 border-t border-[#25221D] space-y-3">
                 <button
-                  onClick={() => openBookingModal(room)}
+                  onClick={() => openBookingModal(activeRoom)}
                   className="w-full py-4 rounded-full bg-gradient-to-r from-[#C5A880] via-[#DFBF95] to-[#B89758] text-[#121316] font-bold text-xs uppercase tracking-[0.22em] shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center space-x-2 cursor-pointer"
                 >
                   <Sparkles className="w-4 h-4" />

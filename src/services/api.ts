@@ -1,3 +1,4 @@
+import { DEFAULT_ROOMS } from '../data/defaultRooms';
 import type {
   User,
   Room,
@@ -154,11 +155,29 @@ export const api = {
 
   // Rooms
   async getRooms(all = false): Promise<Room[]> {
-    return requestJson(`/rooms${all ? '?all=true' : ''}`, undefined, 'Failed to load rooms');
+    try {
+      const data = await requestJson<Room[]>(`/rooms${all ? '?all=true' : ''}`, undefined, 'Failed to load rooms');
+      if (Array.isArray(data) && data.length > 0) {
+        return data;
+      }
+      return DEFAULT_ROOMS;
+    } catch {
+      return DEFAULT_ROOMS;
+    }
   },
 
   async getRoom(id: string): Promise<Room> {
-    return requestJson(`/rooms/${id}`, undefined, 'Room not found');
+    try {
+      const data = await requestJson<Room>(`/rooms/${id}`, undefined, 'Room not found');
+      if (data && data.id) {
+        return data;
+      }
+      const fallback = DEFAULT_ROOMS.find((r) => r.id === id || r.slug === id) || DEFAULT_ROOMS[0];
+      return fallback;
+    } catch {
+      const fallback = DEFAULT_ROOMS.find((r) => r.id === id || r.slug === id) || DEFAULT_ROOMS[0];
+      return fallback;
+    }
   },
 
   async createRoom(data: Partial<Room>): Promise<Room> {
