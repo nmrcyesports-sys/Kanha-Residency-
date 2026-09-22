@@ -159,6 +159,8 @@ export interface Enquiry {
   email: string;
   phone: string;
   message: string;
+  dates?: string;
+  guests?: number;
   status: 'New' | 'Contacted' | 'Resolved';
   admin_notes?: string;
   created_at: string;
@@ -192,6 +194,7 @@ export interface EmailLog {
   error?: string;
   related_booking?: string;
   body?: string;
+  html?: string;
 }
 
 export interface Coupon {

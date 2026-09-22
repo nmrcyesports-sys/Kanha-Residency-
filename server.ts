@@ -3,6 +3,7 @@ import path from 'path';
 import { createServer as createViteServer } from 'vite';
 import { db, verifyPassword } from './server/db.js';
 import { emailService } from './server/emailService.js';
+import { generateBookingConfirmedEmail } from './server/emailTemplates.js';
 
 async function startServer() {
   const app = express();
@@ -495,28 +496,53 @@ async function startServer() {
     try {
       const { to, templateName, customData } = req.body;
       const targetRecipient = to || 'luckyrajgupta1994@gmail.com';
-      const guestName = customData?.guest_name || 'Shri Lucky Raj';
+      const guestName = customData?.guest_name || 'Lucky Raj Gupta';
       const bookingId = customData?.booking_id || `KR${Math.floor(100000 + Math.random() * 900000)}`;
 
-      const textBody = `Namaste ${guestName},
+      // Check if existing booking matches or create mock high-fidelity booking
+      const existing = db.getBookingById(bookingId);
+      const bookingData = existing || {
+        id: `bk_test_${Date.now()}`,
+        booking_number: bookingId,
+        user_id: 'guest_test',
+        room_id: 'room_deluxe',
+        room_name: 'Deluxe Heritage Suite',
+        room_image: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200&q=80',
+        check_in: '2026-11-10',
+        check_out: '2026-11-13',
+        guests: 2,
+        rooms_count: 1,
+        nights: 3,
+        subtotal: 9450,
+        tax: 1134,
+        discount: 500,
+        total: 10084,
+        status: 'Confirmed' as const,
+        payment_status: 'Paid' as const,
+        payment_id: `PAY_KR_${Date.now().toString().slice(-8)}`,
+        payment_method: 'UPI (Google Pay / PhonePe)',
+        special_request: 'Quiet floor, early temple Mangala Aarti assistance requested',
+        policy_consent: { terms: true, cancellation: true, privacy: true },
+        guest: {
+          full_name: guestName,
+          email: targetRecipient,
+          phone: '+91 98765 43210',
+          city: 'Mathura',
+          state: 'Uttar Pradesh',
+        },
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
 
-This is an automated dispatch test from Kanha Residency, Mathura.
-
-DISPATCH SPECIFICATIONS:
-• Recipient: ${targetRecipient}
-• Reference ID: ${bookingId}
-• Service Status: Real-time Mail Pipeline Active
-• Timestamp: ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}
-
-Pilgrimage Hospitality Desk:
-Kanha Residency, Techman Nilgiri, Mathura, UP 281006
-Concierge: +91 98970 12345`;
+      const settings = db.getSettings();
+      const { subject, text, html } = generateBookingConfirmedEmail(bookingData as any, settings);
 
       const result = await emailService.sendEmail({
         to: targetRecipient,
-        subject: `Kanha Residency Mathura: System Notification (${bookingId})`,
-        text: textBody,
-        templateName: templateName || 'System Test',
+        subject,
+        text,
+        html,
+        templateName: templateName || 'Booking Confirmed',
         relatedBooking: bookingId,
       });
 
