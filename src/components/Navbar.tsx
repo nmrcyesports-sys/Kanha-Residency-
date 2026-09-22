@@ -55,7 +55,6 @@ export function Navbar({ currentPath, onNavigate }: NavbarProps) {
     }
     onNavigate(path);
     setMobileMenuOpen(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (

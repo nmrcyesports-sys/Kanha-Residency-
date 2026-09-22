@@ -108,6 +108,18 @@ export function BookingModal() {
     }
   }, [state.step]);
 
+  // Prevent background page from scrolling when modal is open
+  useEffect(() => {
+    if (state.isBookingModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [state.isBookingModalOpen]);
+
   if (!state.isBookingModalOpen) return null;
 
   const today = new Date().toISOString().split('T')[0];

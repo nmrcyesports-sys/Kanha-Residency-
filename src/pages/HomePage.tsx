@@ -38,11 +38,7 @@ export function HomePage({ onNavigate, onSelectRoom }: HomePageProps) {
     <div className="bg-[#0D0E10] text-[#FAF7F2] min-h-screen">
       {/* Cinematic Hero */}
       <Hero
-        onExploreRooms={() => {
-          const el = document.getElementById('rooms-section');
-          if (el) el.scrollIntoView({ behavior: 'smooth' });
-          else onNavigate('/rooms');
-        }}
+        onExploreRooms={() => onNavigate('/rooms')}
         onBookNow={() => openBookingModal()}
       />
 
