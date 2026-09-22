@@ -1,0 +1,6 @@
+{
+  "name": "Kanha Residency - Luxury Hospitality & Booking Management",
+  "description": "A refined luxury stay in the heart of Mathura. Premium accommodations, spiritual experiences, real-time booking engine, guest portal, and complete hotel management system.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

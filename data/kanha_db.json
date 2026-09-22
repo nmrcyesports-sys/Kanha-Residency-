@@ -1,0 +1,1118 @@
+{
+  "users": [
+    {
+      "id": "usr_admin_1",
+      "name": "Executive Concierge Admin",
+      "email": "admin@kanharesidency.com",
+      "phone": "+91 98765 43210",
+      "role": "Admin",
+      "status": "Active",
+      "passwordHash": "54b2798d531624b2cab17e1744de46f9a28c5944549c46cd2e01c6263c5ec2173365f0a6a7e0c8185153be4e26e102779fae6e34505a2ed87e8b2285cbe15909",
+      "salt": "0993c0962210e1a6fed9a4ca32b4bf4c",
+      "created_at": "2026-09-22T10:31:10.785Z",
+      "updated_at": "2026-09-22T11:04:40.656Z"
+    },
+    {
+      "id": "usr_mgr_1",
+      "name": "Operations Manager",
+      "email": "manager@kanharesidency.com",
+      "phone": "+91 98765 43211",
+      "role": "Manager",
+      "status": "Active",
+      "passwordHash": "754607aebd6671cb8f9c761431d20adba9de58036902c9a273437ae6a6b109c2a66b57a6eaf64fdc3b93f2c743c5ac27f7b94163e43d7a432bebc6b69e0d7b7a",
+      "salt": "aba07ce41fe3f7979b6479c2647a3174",
+      "created_at": "2026-09-22T10:31:10.785Z",
+      "updated_at": "2026-09-22T10:31:10.785Z"
+    },
+    {
+      "id": "usr_guest_1",
+      "name": "Rahul Sharma",
+      "email": "rahul.sharma@example.com",
+      "phone": "+91 98111 22334",
+      "role": "Guest",
+      "status": "Active",
+      "passwordHash": "f49c6d621763e434299577bb6b75a1e985466307e72c9a28760f461391c586e8a602d8e2547cec935a6d9a382bd277352b2f9b54a4f70b6595d0f9cc438964e4",
+      "salt": "837341c058661e0a86d7ef308d60bc52",
+      "address": "Sector 45, Gurgaon, Haryana",
+      "created_at": "2026-09-22T10:31:10.785Z",
+      "updated_at": "2026-09-22T10:31:10.785Z"
+    }
+  ],
+  "rooms": [
+    {
+      "id": "room_deluxe",
+      "name": "Deluxe Room",
+      "slug": "deluxe-room",
+      "short_description": "A cozy and elegant room designed for comfort, featuring modern amenities and a serene atmosphere.",
+      "description": "Crafted for discerning solo pilgrims and couples, the Deluxe Room harmoniously blends timeless Indian warmth with contemporary minimalist elegance. Enjoy custom king bedding dressed in 400-thread-count Egyptian cotton, acoustic double-glazed soundproofing for tranquil meditation, and custom ambient lighting designed for restful recovery after sacred darshan tours.",
+      "price": 3500,
+      "discount_price": 3150,
+      "max_guests": 2,
+      "bed_type": "King Bed",
+      "room_size": "310 sq.ft",
+      "amenities": [
+        "High-Speed Wi-Fi",
+        "Climate Control AC",
+        "55\" 4K Smart TV",
+        "24/7 In-Room Dining",
+        "Italian Marble Ensuite",
+        "Artisanal Tea Station"
+      ],
+      "featured_image": "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "status": "Active",
+      "featured": true,
+      "inventory_count": 6,
+      "created_at": "2026-09-22T10:31:10.785Z",
+      "updated_at": "2026-09-22T10:31:10.785Z"
+    },
+    {
+      "id": "room_superior",
+      "name": "Superior Room",
+      "slug": "superior-room",
+      "short_description": "Spacious sanctuary with bespoke timber accents, courtyard view, and an oversized rain bath.",
+      "description": "The Superior Room elevates your spiritual retreat with enhanced square footage, an inviting seating lounge by panoramic windows, and views overlooking the peaceful inner courtyard garden. Features artisanal brass fixtures, hand-loomed rugs, and a marble bath that creates a personal sanctuary.",
+      "price": 4500,
+      "discount_price": 4050,
+      "max_guests": 2,
+      "bed_type": "King Bed",
+      "room_size": "350 sq.ft",
+      "amenities": [
+        "High-Speed Wi-Fi",
+        "Climate Control AC",
+        "55\" 4K Smart TV",
+        "24/7 In-Room Dining",
+        "Italian Marble Ensuite",
+        "Handcrafted Teak Wardrobe",
+        "Temple & Darshan Desk"
+      ],
+      "featured_image": "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=1200&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1591088398332-8a7791972843?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "status": "Active",
+      "featured": true,
+      "inventory_count": 5,
+      "created_at": "2026-09-22T10:31:10.785Z",
+      "updated_at": "2026-09-22T10:31:10.785Z"
+    },
+    {
+      "id": "room_family_suite",
+      "name": "Family Suite",
+      "slug": "family-suite",
+      "short_description": "Expansive family residence with dual bedrooms, plush dining nook, and generous living area.",
+      "description": "Ideal for multigenerational families visiting Braj Bhumi together, the Family Suite provides dual queen beds, two private dressing vanity nooks, and a serene common sitting room. The suite is outfitted with child and elder safety considerations, complimentary puja preparation kits, and express room dining services.",
+      "price": 6500,
+      "discount_price": 5850,
+      "max_guests": 4,
+      "bed_type": "2 Queen Beds",
+      "room_size": "520 sq.ft",
+      "amenities": [
+        "High-Speed Wi-Fi",
+        "Climate Control AC",
+        "55\" 4K Smart TV",
+        "24/7 In-Room Dining",
+        "Italian Marble Ensuite",
+        "Handcrafted Teak Wardrobe",
+        "Artisanal Tea Station",
+        "Temple & Darshan Desk"
+      ],
+      "featured_image": "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=1200&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1590490359683-658d3d23f972?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "status": "Active",
+      "featured": true,
+      "inventory_count": 3,
+      "created_at": "2026-09-22T10:31:10.785Z",
+      "updated_at": "2026-09-22T10:31:10.785Z"
+    },
+    {
+      "id": "room_premium_suite",
+      "name": "Premium Suite",
+      "slug": "premium-suite",
+      "short_description": "The pinnacle of luxury at Kanha Residency. Private balcony, bespoke lounge, and private butler service.",
+      "description": "Our flagship accommodation offers peerless luxury in Mathura. The Premium Suite features an expansive private balcony overlooking peaceful Mathura sunrises, an opulent living salon with hand-carved jali panels, a deep soaking tub with panoramic vistas, and dedicated concierge access for personalized private temple journeys.",
+      "price": 8500,
+      "discount_price": 7650,
+      "max_guests": 4,
+      "bed_type": "Royal King Bed",
+      "room_size": "720 sq.ft",
+      "amenities": [
+        "High-Speed Wi-Fi",
+        "Climate Control AC",
+        "55\" 4K Smart TV",
+        "24/7 In-Room Dining",
+        "Italian Marble Ensuite",
+        "Handcrafted Teak Wardrobe",
+        "Artisanal Tea Station",
+        "Temple & Darshan Desk"
+      ],
+      "featured_image": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "status": "Active",
+      "featured": true,
+      "inventory_count": 2,
+      "created_at": "2026-09-22T10:31:10.785Z",
+      "updated_at": "2026-09-22T10:31:10.785Z"
+    }
+  ],
+  "amenities": [
+    {
+      "id": "amen_wifi",
+      "name": "High-Speed Wi-Fi",
+      "description": "Ultra-fast fiber optic connection throughout property",
+      "icon": "Wifi",
+      "status": "Active"
+    },
+    {
+      "id": "amen_ac",
+      "name": "Climate Control AC",
+      "description": "Whisper-quiet multi-split climate inverter cooling",
+      "icon": "Wind",
+      "status": "Active"
+    },
+    {
+      "id": "amen_tv",
+      "name": "55\" 4K Smart TV",
+      "description": "Curated OTT apps and live spiritual broadcasts",
+      "icon": "Tv",
+      "status": "Active"
+    },
+    {
+      "id": "amen_dining",
+      "name": "24/7 In-Room Dining",
+      "description": "Pure vegetarian Mathura & global gourmet delicacies",
+      "icon": "UtensilsCrossed",
+      "status": "Active"
+    },
+    {
+      "id": "amen_bath",
+      "name": "Italian Marble Ensuite",
+      "description": "Rain shower with organic Ayurvedic botanicals",
+      "icon": "Bath",
+      "status": "Active"
+    },
+    {
+      "id": "amen_wardrobe",
+      "name": "Handcrafted Teak Wardrobe",
+      "description": "Spacious hanging space with electronic safe",
+      "icon": "Shield",
+      "status": "Active"
+    },
+    {
+      "id": "amen_kettle",
+      "name": "Artisanal Tea Station",
+      "description": "Selection of organic herbal infusions and coffee",
+      "icon": "Coffee",
+      "status": "Active"
+    },
+    {
+      "id": "amen_desk",
+      "name": "Temple & Darshan Desk",
+      "description": "Priority VIP pass assistance for Mathura & Vrindavan",
+      "icon": "Compass",
+      "status": "Active"
+    }
+  ],
+  "availability": [
+    {
+      "id": "av_1790075236253_sqxt",
+      "room_id": "room_superior",
+      "date": "2026-09-03",
+      "status": "maintenance",
+      "notes": ""
+    },
+    {
+      "id": "av_1790075236253_dkg1",
+      "room_id": "room_superior",
+      "date": "2026-09-04",
+      "status": "maintenance",
+      "notes": ""
+    },
+    {
+      "id": "av_1790075236253_x58j",
+      "room_id": "room_superior",
+      "date": "2026-09-05",
+      "status": "maintenance",
+      "notes": ""
+    },
+    {
+      "id": "av_1790075236253_499a",
+      "room_id": "room_superior",
+      "date": "2026-09-06",
+      "status": "maintenance",
+      "notes": ""
+    },
+    {
+      "id": "av_1790075236253_7mxp",
+      "room_id": "room_superior",
+      "date": "2026-09-07",
+      "status": "maintenance",
+      "notes": ""
+    },
+    {
+      "id": "av_1790075236253_p2ja",
+      "room_id": "room_superior",
+      "date": "2026-09-08",
+      "status": "maintenance",
+      "notes": ""
+    },
+    {
+      "id": "av_1790075236253_oaxz",
+      "room_id": "room_superior",
+      "date": "2026-09-09",
+      "status": "maintenance",
+      "notes": ""
+    },
+    {
+      "id": "av_1790075236253_0jyt",
+      "room_id": "room_superior",
+      "date": "2026-09-10",
+      "status": "maintenance",
+      "notes": ""
+    },
+    {
+      "id": "av_1790075236253_w7gw",
+      "room_id": "room_superior",
+      "date": "2026-09-11",
+      "status": "maintenance",
+      "notes": ""
+    },
+    {
+      "id": "av_1790075236253_1jsd",
+      "room_id": "room_superior",
+      "date": "2026-09-12",
+      "status": "maintenance",
+      "notes": ""
+    },
+    {
+      "id": "av_1790075236253_d3oy",
+      "room_id": "room_superior",
+      "date": "2026-09-13",
+      "status": "maintenance",
+      "notes": ""
+    },
+    {
+      "id": "av_1790075236253_kw1n",
+      "room_id": "room_superior",
+      "date": "2026-09-14",
+      "status": "maintenance",
+      "notes": ""
+    },
+    {
+      "id": "av_1790075236253_srw4",
+      "room_id": "room_superior",
+      "date": "2026-09-15",
+      "status": "maintenance",
+      "notes": ""
+    },
+    {
+      "id": "av_1790075236253_aaw2",
+      "room_id": "room_superior",
+      "date": "2026-09-16",
+      "status": "maintenance",
+      "notes": ""
+    },
+    {
+      "id": "av_1790075236253_dohu",
+      "room_id": "room_superior",
+      "date": "2026-09-17",
+      "status": "maintenance",
+      "notes": ""
+    },
+    {
+      "id": "av_1790075236253_rsls",
+      "room_id": "room_superior",
+      "date": "2026-09-18",
+      "status": "maintenance",
+      "notes": ""
+    },
+    {
+      "id": "av_1790075236253_idyi",
+      "room_id": "room_superior",
+      "date": "2026-09-19",
+      "status": "maintenance",
+      "notes": ""
+    },
+    {
+      "id": "av_1790075236253_87gb",
+      "room_id": "room_superior",
+      "date": "2026-09-20",
+      "status": "maintenance",
+      "notes": ""
+    },
+    {
+      "id": "av_1790075236253_ccsv",
+      "room_id": "room_superior",
+      "date": "2026-09-21",
+      "status": "maintenance",
+      "notes": ""
+    },
+    {
+      "id": "av_1790075236253_spep",
+      "room_id": "room_superior",
+      "date": "2026-09-22",
+      "status": "maintenance",
+      "notes": ""
+    },
+    {
+      "id": "av_1790075236253_wvzc",
+      "room_id": "room_superior",
+      "date": "2026-09-23",
+      "status": "maintenance",
+      "notes": ""
+    },
+    {
+      "id": "av_1790075236253_pcsi",
+      "room_id": "room_superior",
+      "date": "2026-09-24",
+      "status": "maintenance",
+      "notes": ""
+    },
+    {
+      "id": "av_1790075236253_j5wq",
+      "room_id": "room_superior",
+      "date": "2026-09-25",
+      "status": "maintenance",
+      "notes": ""
+    },
+    {
+      "id": "av_1790075236253_w2k2",
+      "room_id": "room_superior",
+      "date": "2026-09-26",
+      "status": "maintenance",
+      "notes": ""
+    },
+    {
+      "id": "av_1790075236253_n4fi",
+      "room_id": "room_superior",
+      "date": "2026-09-27",
+      "status": "maintenance",
+      "notes": ""
+    },
+    {
+      "id": "av_1790075236253_pfz5",
+      "room_id": "room_superior",
+      "date": "2026-09-28",
+      "status": "maintenance",
+      "notes": ""
+    },
+    {
+      "id": "av_1790075236253_99mw",
+      "room_id": "room_superior",
+      "date": "2026-09-29",
+      "status": "maintenance",
+      "notes": ""
+    },
+    {
+      "id": "av_1790075236253_jfsi",
+      "room_id": "room_superior",
+      "date": "2026-09-30",
+      "status": "maintenance",
+      "notes": ""
+    }
+  ],
+  "bookings": [
+    {
+      "id": "bk_1790076316809",
+      "booking_number": "KR202611205561",
+      "user_id": "guest_1790076316808",
+      "room_id": "room_superior",
+      "room_name": "Superior Room",
+      "room_image": "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=1200&q=80",
+      "check_in": "2026-11-20",
+      "check_out": "2026-11-22",
+      "guests": 2,
+      "rooms_count": 1,
+      "nights": 2,
+      "subtotal": 8100,
+      "tax": 972,
+      "discount": 0,
+      "total": 9072,
+      "status": "Confirmed",
+      "payment_status": "Paid",
+      "payment_id": "pay_kr_1790076316809",
+      "payment_method": "UPI",
+      "special_request": "",
+      "policy_consent": {
+        "terms": true,
+        "cancellation": true,
+        "privacy": true
+      },
+      "guest": {
+        "full_name": "Lucky Raj Gupta",
+        "email": "luckyrajgupta1994@gmail.com",
+        "phone": "+91 98765 43210",
+        "city": "Mathura",
+        "state": "UP"
+      },
+      "created_at": "2026-09-22T11:25:16.809Z",
+      "updated_at": "2026-09-22T11:25:16.809Z"
+    },
+    {
+      "id": "bk_1790076131532",
+      "booking_number": "KR202611105725",
+      "user_id": "guest_1790076131531",
+      "room_id": "room_deluxe",
+      "room_name": "Deluxe Room",
+      "room_image": "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200&q=80",
+      "check_in": "2026-11-10",
+      "check_out": "2026-11-13",
+      "guests": 2,
+      "rooms_count": 1,
+      "nights": 3,
+      "subtotal": 9450,
+      "tax": 1134,
+      "discount": 0,
+      "total": 10584,
+      "status": "Confirmed",
+      "payment_status": "Paid",
+      "payment_id": "pay_kr_1790076131532",
+      "payment_method": "UPI",
+      "special_request": "",
+      "policy_consent": {
+        "terms": true,
+        "cancellation": true,
+        "privacy": true
+      },
+      "guest": {
+        "full_name": "Lucky Raj Gupta",
+        "email": "luckyrajgupta1994@gmail.com",
+        "phone": "+91 98765 43210",
+        "city": "Mathura",
+        "state": "UP"
+      },
+      "created_at": "2026-09-22T11:22:11.532Z",
+      "updated_at": "2026-09-22T11:22:11.532Z"
+    },
+    {
+      "id": "bk_1790074905414",
+      "booking_number": "KR202609238512",
+      "user_id": "guest_1790074905413",
+      "room_id": "room_superior",
+      "room_name": "Superior Room",
+      "room_image": "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=1200&q=80",
+      "check_in": "2026-09-23",
+      "check_out": "2026-09-25",
+      "guests": 2,
+      "rooms_count": 3,
+      "nights": 2,
+      "subtotal": 8100,
+      "tax": 972,
+      "discount": 0,
+      "total": 9072,
+      "status": "Confirmed",
+      "payment_status": "Paid",
+      "payment_id": "pay_kr_1790074905414",
+      "payment_method": "Cards",
+      "special_request": "",
+      "policy_consent": {
+        "terms": true,
+        "cancellation": true,
+        "privacy": true,
+        "timestamp": "2026-09-22T11:01:33.519Z",
+        "version": "v1.0-2026"
+      },
+      "guest": {
+        "full_name": "Lucky Gupta",
+        "email": "luckyrajgupta1994@gmail.com",
+        "phone": "+916200871886",
+        "address": "",
+        "city": "Mathura",
+        "state": "Uttar Pradesh",
+        "country": "India",
+        "special_requests": ""
+      },
+      "created_at": "2026-09-22T11:01:45.414Z",
+      "updated_at": "2026-09-22T11:01:45.414Z"
+    },
+    {
+      "id": "bk_1790073129308",
+      "booking_number": "KR202609234254",
+      "user_id": "guest_1790073129308",
+      "room_id": "room_family_suite",
+      "room_name": "Family Suite",
+      "room_image": "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=1200&q=80",
+      "check_in": "2026-09-23",
+      "check_out": "2026-09-26",
+      "guests": 2,
+      "rooms_count": 3,
+      "nights": 3,
+      "subtotal": 17550,
+      "tax": 2106,
+      "discount": 0,
+      "total": 19656,
+      "status": "Confirmed",
+      "payment_status": "Paid",
+      "payment_id": "pay_kr_1790073129308",
+      "payment_method": "UPI",
+      "special_request": "",
+      "policy_consent": {
+        "terms": true,
+        "cancellation": true,
+        "privacy": true,
+        "timestamp": "2026-09-22T10:31:57.565Z",
+        "version": "v1.0-2026"
+      },
+      "guest": {
+        "full_name": "Lucky Gupta",
+        "email": "luckyrajgupta1994@gmail.com",
+        "phone": "+916200871886",
+        "address": "",
+        "city": "Mathura",
+        "state": "Uttar Pradesh",
+        "country": "India",
+        "special_requests": ""
+      },
+      "created_at": "2026-09-22T10:32:09.308Z",
+      "updated_at": "2026-09-22T10:32:09.308Z"
+    },
+    {
+      "id": "bk_2026_01",
+      "booking_number": "KR20260425",
+      "user_id": "usr_guest_1",
+      "room_id": "room_deluxe",
+      "room_name": "Deluxe Room",
+      "room_image": "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=600&q=80",
+      "check_in": "2026-04-25",
+      "check_out": "2026-04-28",
+      "guests": 2,
+      "rooms_count": 1,
+      "nights": 3,
+      "subtotal": 10500,
+      "tax": 1260,
+      "discount": 0,
+      "total": 11760,
+      "status": "Confirmed",
+      "payment_status": "Paid",
+      "payment_id": "pay_kr_init_01",
+      "payment_method": "UPI",
+      "special_request": "Quiet top-floor room with early check-in for morning Yamuna aarti if possible.",
+      "policy_consent": {
+        "terms": true,
+        "cancellation": true,
+        "privacy": true,
+        "timestamp": "2026-09-22T10:31:10.785Z",
+        "version": "v1.0-2026"
+      },
+      "guest": {
+        "full_name": "Rahul Sharma",
+        "email": "rahul.sharma@example.com",
+        "phone": "+91 98111 22334",
+        "address": "Sector 45",
+        "city": "Gurgaon",
+        "state": "Haryana",
+        "country": "India",
+        "special_requests": "Quiet top-floor room with early check-in for morning Yamuna aarti."
+      },
+      "created_at": "2026-09-22T10:31:10.785Z",
+      "updated_at": "2026-09-22T10:31:10.785Z"
+    }
+  ],
+  "payments": [
+    {
+      "id": "pay_rec_1790076316809",
+      "booking_id": "bk_1790076316809",
+      "booking_number": "KR202611205561",
+      "guest_name": "Lucky Raj Gupta",
+      "payment_id": "pay_kr_1790076316809",
+      "gateway": "Razorpay",
+      "amount": 9072,
+      "currency": "INR",
+      "status": "Success",
+      "transaction_reference": "UPI/AUTH/76316809",
+      "payment_method": "UPI",
+      "paid_at": "2026-09-22T11:25:16.809Z",
+      "created_at": "2026-09-22T11:25:16.809Z"
+    },
+    {
+      "id": "pay_rec_1790076131532",
+      "booking_id": "bk_1790076131532",
+      "booking_number": "KR202611105725",
+      "guest_name": "Lucky Raj Gupta",
+      "payment_id": "pay_kr_1790076131532",
+      "gateway": "Razorpay",
+      "amount": 10584,
+      "currency": "INR",
+      "status": "Success",
+      "transaction_reference": "UPI/AUTH/76131532",
+      "payment_method": "UPI",
+      "paid_at": "2026-09-22T11:22:11.532Z",
+      "created_at": "2026-09-22T11:22:11.532Z"
+    },
+    {
+      "id": "pay_rec_1790074905414",
+      "booking_id": "bk_1790074905414",
+      "booking_number": "KR202609238512",
+      "guest_name": "Lucky Gupta",
+      "payment_id": "pay_kr_1790074905414",
+      "gateway": "Razorpay",
+      "amount": 9072,
+      "currency": "INR",
+      "status": "Success",
+      "transaction_reference": "Cards/AUTH/74905414",
+      "payment_method": "Cards",
+      "paid_at": "2026-09-22T11:01:45.414Z",
+      "created_at": "2026-09-22T11:01:45.414Z"
+    },
+    {
+      "id": "pay_rec_1790073129308",
+      "booking_id": "bk_1790073129308",
+      "booking_number": "KR202609234254",
+      "guest_name": "Lucky Gupta",
+      "payment_id": "pay_kr_1790073129308",
+      "gateway": "Razorpay",
+      "amount": 19656,
+      "currency": "INR",
+      "status": "Success",
+      "transaction_reference": "UPI/AUTH/73129308",
+      "payment_method": "UPI",
+      "paid_at": "2026-09-22T10:32:09.308Z",
+      "created_at": "2026-09-22T10:32:09.308Z"
+    },
+    {
+      "id": "pay_rec_1",
+      "booking_id": "bk_2026_01",
+      "booking_number": "KR20260425",
+      "guest_name": "Rahul Sharma",
+      "payment_id": "pay_kr_init_01",
+      "gateway": "Razorpay",
+      "amount": 11760,
+      "currency": "INR",
+      "status": "Success",
+      "transaction_reference": "UPI/2026/894372910/KANHA",
+      "payment_method": "UPI",
+      "paid_at": "2026-09-22T10:31:10.785Z",
+      "created_at": "2026-09-22T10:31:10.785Z"
+    }
+  ],
+  "reviews": [
+    {
+      "id": "rev_1",
+      "booking_id": "bk_2026_01",
+      "user_id": "usr_guest_1",
+      "user_name": "Rahul Sharma",
+      "user_location": "Gurgaon, Haryana",
+      "room_id": "room_deluxe",
+      "room_name": "Deluxe Room",
+      "rating": 5,
+      "title": "An oasis of peace in Mathura",
+      "review": "Kanha Residency was the highlight of our Mathura & Vrindavan pilgrimage. The tranquil aesthetics, impeccably clean linen, warm courteous staff, and pure sattvic culinary offerings made our stay unforgettable. The concierge arranged our early morning VIP darshan with effortless grace.",
+      "status": "Approved",
+      "verified_guest": true,
+      "created_at": "2026-09-22T10:31:10.785Z"
+    },
+    {
+      "id": "rev_2",
+      "user_name": "Ananya & Vikram Deshmukh",
+      "user_location": "Pune, Maharashtra",
+      "room_id": "room_family_suite",
+      "room_name": "Family Suite",
+      "rating": 5,
+      "title": "Perfect for family and elderly parents",
+      "review": "Traveled with my 72-year-old parents. The lift access, comfortable bedding, and quiet ambience after long temple walks was exactly what we prayed for. Highly recommended for families seeking peace and luxury.",
+      "status": "Approved",
+      "verified_guest": true,
+      "created_at": "2026-09-22T10:31:10.785Z"
+    },
+    {
+      "id": "rev_3",
+      "user_name": "Dr. Siddharth Roy",
+      "user_location": "Kolkata, West Bengal",
+      "room_id": "room_premium_suite",
+      "room_name": "Premium Suite",
+      "rating": 5,
+      "title": "World-class hospitality rooted in Braj tradition",
+      "review": "Subtle incense, warm tea upon arrival, and breathtaking architectural details. Kanha Residency sets a new standard for hospitality in Uttar Pradesh.",
+      "status": "Approved",
+      "verified_guest": true,
+      "created_at": "2026-09-22T10:31:10.785Z"
+    }
+  ],
+  "enquiries": [
+    {
+      "id": "enq_1",
+      "name": "Meera Kapur",
+      "email": "meera.k@gmail.com",
+      "phone": "+91 99201 44552",
+      "message": "Namaste, we are planning a 4-day Vrindavan & Mathura parikrama tour for 8 elders in May. Do you provide temple transfers and satvik breakfast?",
+      "status": "New",
+      "created_at": "2026-09-22T10:31:10.785Z"
+    }
+  ],
+  "gallery": [
+    {
+      "id": "gal_1",
+      "title": "Grand Facade & Evening Illumination",
+      "category": "Property",
+      "image": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1200&q=80",
+      "description": "Evening ambience and architectural warmth at Kanha Residency",
+      "sort_order": 1,
+      "status": "Active"
+    },
+    {
+      "id": "gal_2",
+      "title": "Deluxe Suite Living Sanctuary",
+      "category": "Rooms",
+      "image": "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200&q=80",
+      "description": "Plush bedding and tailored wooden finishes",
+      "sort_order": 2,
+      "status": "Active"
+    },
+    {
+      "id": "gal_3",
+      "title": "Handcrafted Lobby & Concierge Lounge",
+      "category": "Interiors",
+      "image": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80",
+      "description": "Intricate brass lamps and warm stone surfaces",
+      "sort_order": 3,
+      "status": "Active"
+    },
+    {
+      "id": "gal_4",
+      "title": "Shri Krishna Janmabhoomi Darshan",
+      "category": "Mathura",
+      "image": "https://images.unsplash.com/photo-1609766857041-ed402ea8069a?auto=format&fit=crop&w=1200&q=80",
+      "description": "The sacred birthplace of Lord Krishna in Mathura (10 mins away)",
+      "sort_order": 4,
+      "status": "Active"
+    },
+    {
+      "id": "gal_5",
+      "title": "Prem Mandir Evening Light Illumination",
+      "category": "Experience",
+      "image": "https://images.unsplash.com/photo-1567157577867-05ccb1388e66?auto=format&fit=crop&w=1200&q=80",
+      "description": "Mesmerizing Italian marble temple in nearby Vrindavan",
+      "sort_order": 5,
+      "status": "Active"
+    },
+    {
+      "id": "gal_6",
+      "title": "Morning Yamuna Aarti at Vishram Ghat",
+      "category": "Mathura",
+      "image": "https://images.unsplash.com/photo-1627894006066-b4520790175b?auto=format&fit=crop&w=1200&q=80",
+      "description": "Traditional morning prayers and sacred river reflections",
+      "sort_order": 6,
+      "status": "Active"
+    },
+    {
+      "id": "gal_7",
+      "title": "Artisanal Dining & Sattvic Breakfast",
+      "category": "Interiors",
+      "image": "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=1200&q=80",
+      "description": "Freshly prepared vegetarian nourishment for body and soul",
+      "sort_order": 7,
+      "status": "Active"
+    },
+    {
+      "id": "gal_8",
+      "title": "Courtyard Water Feature & Zen Seating",
+      "category": "Property",
+      "image": "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&w=1200&q=80",
+      "description": "Reflective pond and meditation seating for quiet contemplation",
+      "sort_order": 8,
+      "status": "Active"
+    }
+  ],
+  "emailTemplates": [
+    {
+      "id": "tpl_welcome",
+      "name": "Welcome Email",
+      "subject": "Welcome to the Kanha Residency Circle, {{guest_name}}",
+      "body": "Namaste {{guest_name}},\n\nWelcome to Kanha Residency, Mathura. We are delighted to have you as part of our circle. Whether you are traveling for sacred darshan or a tranquil retreat in Braj, our concierge team is at your complete service.\n\nWarm regards,\nKanha Residency Concierge\nMathura, Uttar Pradesh",
+      "status": "Active"
+    },
+    {
+      "id": "tpl_booking_created",
+      "name": "Booking Received",
+      "subject": "Reservation Received: {{booking_id}} - Kanha Residency",
+      "body": "Namaste {{guest_name}},\n\nYour reservation request for {{room_name}} has been received for the dates {{check_in}} to {{check_out}} for {{guests}} guests.\n\nTotal: ₹{{total}}\n\nYour room is currently being confirmed by our reservations desk.\n\nKanha Residency, Mathura",
+      "status": "Active"
+    },
+    {
+      "id": "tpl_booking_confirmed",
+      "name": "Booking Confirmed",
+      "subject": "Confirmed: Your Stay at Kanha Residency (ID: {{booking_id}})",
+      "body": "Namaste {{guest_name}},\n\nWe are overjoyed to confirm your stay at Kanha Residency, Mathura.\n\nBooking ID: {{booking_id}}\nRoom: {{room_name}}\nCheck-in: {{check_in}} (from 14:00)\nCheck-out: {{check_out}} (until 11:00)\nGuests: {{guests}}\nTotal Paid: ₹{{total}}\n\nLocation: CMWM+RJX, Techman Nilgiri, Mathura, UP 281006.\n\nWe eagerly await welcoming you,\nKanha Residency Management",
+      "status": "Active"
+    },
+    {
+      "id": "tpl_cancellation",
+      "name": "Booking Cancelled",
+      "subject": "Cancellation Confirmation: {{booking_id}} - Kanha Residency",
+      "body": "Namaste {{guest_name}},\n\nYour reservation {{booking_id}} for {{room_name}} has been cancelled as requested. Any eligible refunds have been initiated in accordance with our cancellation policy.\n\nWe hope to welcome you to Mathura in the future.\n\nKanha Residency",
+      "status": "Active"
+    }
+  ],
+  "emailLogs": [
+    {
+      "id": "eml_1790076316809",
+      "recipient": "luckyrajgupta1994@gmail.com",
+      "subject": "Confirmed: Your Stay at Kanha Residency (ID: KR202611205561)",
+      "template_name": "Booking Confirmed",
+      "status": "Sent",
+      "sent_time": "2026-09-22T11:25:16.809Z",
+      "related_booking": "KR202611205561",
+      "body": "Namaste Lucky Raj Gupta,\n\nWe are honored to confirm your reservation at Kanha Residency, Mathura.\n\nRESERVATION DETAILS:\n• Booking Reference: KR202611205561\n• Reserved Suite: Superior Room\n• Check-in: 2026-11-20 (from 14:00)\n• Check-out: 2026-11-22 (until 11:00)\n• Stay Duration: 2 Night(s)\n• Total Guests: 2\n• Total Amount Paid: ₹9072 (GST 12% included)\n• Transaction Ref: UPI/AUTH/76316809\n\nPILGRIMAGE CONCIERGE & LOCAL GUIDANCE:\n• Shri Krishna Janmabhoomi: 10 mins (Morning Mangala Aarti: 05:30 AM)\n• Dwarkadhish Temple & Vishram Ghat: Evening Yamuna Aarti at 07:00 PM\n• Govardhan Parikrama: Pre-arranged private transport available upon request\n\nPROPERTY ADDRESS:\nKanha Residency, CMWM+RJX, Techman Nilgiri, Mathura, Uttar Pradesh 281006\nConcierge Desk: +91 98970 12345 | reservations@kanharesidency.com\n\nWarm regards & Jai Shri Krishna,\nKanha Residency Hospitality Team"
+    },
+    {
+      "id": "eml_1790076312174_cx0c",
+      "recipient": "luckyrajgupta1994@gmail.com",
+      "subject": "Kanha Residency Mathura: System Notification (KR-LIVE-SUCCESS)",
+      "template_name": "Booking Confirmed",
+      "status": "Sent",
+      "sent_time": "2026-09-22T11:25:09.684Z",
+      "related_booking": "KR-LIVE-SUCCESS",
+      "body": "Namaste Lucky Raj Gupta,\n\nThis is an automated dispatch test from Kanha Residency, Mathura.\n\nDISPATCH SPECIFICATIONS:\n• Recipient: luckyrajgupta1994@gmail.com\n• Reference ID: KR-LIVE-SUCCESS\n• Service Status: Real-time Mail Pipeline Active\n• Timestamp: 22/9/2026, 4:55:09 pm\n\nPilgrimage Hospitality Desk:\nKanha Residency, Techman Nilgiri, Mathura, UP 281006\nConcierge: +91 98970 12345"
+    },
+    {
+      "id": "eml_1790076203416_t9sc",
+      "recipient": "luckyrajgupta1994@gmail.com",
+      "subject": "Kanha Residency Mathura: System Notification (KR934108)",
+      "template_name": "Booking Confirmed",
+      "status": "Sent",
+      "sent_time": "2026-09-22T11:23:16.953Z",
+      "related_booking": "KR934108",
+      "body": "Namaste Shri Lucky Raj,\n\nThis is an automated dispatch test from Kanha Residency, Mathura.\n\nDISPATCH SPECIFICATIONS:\n• Recipient: luckyrajgupta1994@gmail.com\n• Reference ID: KR934108\n• Service Status: Real-time Mail Pipeline Active\n• Timestamp: 22/9/2026, 4:53:16 pm\n\nPilgrimage Hospitality Desk:\nKanha Residency, Techman Nilgiri, Mathura, UP 281006\nConcierge: +91 98970 12345"
+    },
+    {
+      "id": "eml_1790076137187_ua3a",
+      "recipient": "luckyrajgupta1994@gmail.com",
+      "subject": "Confirmed: Your Stay at Kanha Residency (ID: KR202611105725)",
+      "template_name": "Booking Confirmed",
+      "status": "Sent",
+      "sent_time": "2026-09-22T11:22:11.533Z",
+      "related_booking": "KR202611105725",
+      "body": "Namaste Lucky Raj Gupta,\n\nWe are delighted to confirm your upcoming reservation at Kanha Residency, Mathura.\n\nRESERVATION DETAILS:\n• Booking Reference: KR202611105725\n• Reserved Suite: Deluxe Room\n• Check-in: 2026-11-10 (from 14:00 PM)\n• Check-out: 2026-11-13 (until 11:00 AM)\n• Stay Duration: 3 Night(s)\n• Total Guests: 2\n• Total Amount: ₹10584 (GST 12% included)\n• Payment Status: Paid (UPI)\n\nPILGRIMAGE CONCIERGE & LOCAL GUIDANCE:\n• Shri Krishna Janmabhoomi: 10 mins distance (Morning Aarti: 05:30 AM)\n• Dwarkadhish Temple & Vishram Ghat: Evening Yamuna Aarti at 07:00 PM\n• Pure Vegetarian & Satvik In-Room Dining Available 24/7\n\nPROPERTY ADDRESS:\nKanha Residency, CMWM+RJX, Techman Nilgiri, Mathura, Uttar Pradesh 281006\nConcierge Line: +91 98970 12345\nEmail: reservations@kanharesidency.com\n\nWarm regards & Jai Shri Krishna,\nKanha Residency Hospitality Team"
+    },
+    {
+      "id": "eml_1790076131532",
+      "recipient": "luckyrajgupta1994@gmail.com",
+      "subject": "Confirmed: Your Stay at Kanha Residency (ID: KR202611105725)",
+      "template_name": "Booking Confirmed",
+      "status": "Sent",
+      "sent_time": "2026-09-22T11:22:11.532Z",
+      "related_booking": "KR202611105725",
+      "body": "Namaste Lucky Raj Gupta,\n\nWe are honored to confirm your reservation at Kanha Residency, Mathura.\n\nRESERVATION DETAILS:\n• Booking Reference: KR202611105725\n• Reserved Suite: Deluxe Room\n• Check-in: 2026-11-10 (from 14:00)\n• Check-out: 2026-11-13 (until 11:00)\n• Stay Duration: 3 Night(s)\n• Total Guests: 2\n• Total Amount Paid: ₹10584 (GST 12% included)\n• Transaction Ref: UPI/AUTH/76131532\n\nPILGRIMAGE CONCIERGE & LOCAL GUIDANCE:\n• Shri Krishna Janmabhoomi: 10 mins (Morning Mangala Aarti: 05:30 AM)\n• Dwarkadhish Temple & Vishram Ghat: Evening Yamuna Aarti at 07:00 PM\n• Govardhan Parikrama: Pre-arranged private transport available upon request\n\nPROPERTY ADDRESS:\nKanha Residency, CMWM+RJX, Techman Nilgiri, Mathura, Uttar Pradesh 281006\nConcierge Desk: +91 98970 12345 | reservations@kanharesidency.com\n\nWarm regards & Jai Shri Krishna,\nKanha Residency Hospitality Team"
+    },
+    {
+      "id": "eml_1790076068732_jm7k",
+      "recipient": "luckyrajgupta1994@gmail.com",
+      "subject": "Kanha Residency Mathura: System Notification (KR892341)",
+      "template_name": "Booking Confirmation Voucher",
+      "status": "Sent",
+      "sent_time": "2026-09-22T11:21:01.893Z",
+      "related_booking": "KR892341",
+      "body": "Namaste Lucky Raj Gupta,\n\nThis is an automated dispatch test from Kanha Residency, Mathura.\n\nDISPATCH SPECIFICATIONS:\n• Recipient: luckyrajgupta1994@gmail.com\n• Reference ID: KR892341\n• Service Status: Real-time Mail Pipeline Active\n• Timestamp: 22/9/2026, 4:51:01 pm\n\nPilgrimage Hospitality Desk:\nKanha Residency, Techman Nilgiri, Mathura, UP 281006\nConcierge: +91 98970 12345"
+    },
+    {
+      "id": "eml_1790074905414",
+      "recipient": "luckyrajgupta1994@gmail.com",
+      "subject": "Confirmed: Your Stay at Kanha Residency (ID: KR202609238512)",
+      "template_name": "Booking Confirmed",
+      "status": "Sent",
+      "sent_time": "2026-09-22T11:01:45.414Z",
+      "related_booking": "KR202609238512",
+      "body": "Namaste Lucky Gupta,\n\nWe are honored to confirm your reservation at Kanha Residency, Mathura.\n\nRESERVATION DETAILS:\n• Booking Reference: KR202609238512\n• Reserved Suite: Superior Room\n• Check-in: 2026-09-23 (from 14:00)\n• Check-out: 2026-09-25 (until 11:00)\n• Stay Duration: 2 Night(s)\n• Total Guests: 2\n• Total Amount Paid: ₹9072 (GST 12% included)\n• Transaction Ref: Cards/AUTH/74905414\n\nPILGRIMAGE CONCIERGE & LOCAL GUIDANCE:\n• Shri Krishna Janmabhoomi: 10 mins (Morning Mangala Aarti: 05:30 AM)\n• Dwarkadhish Temple & Vishram Ghat: Evening Yamuna Aarti at 07:00 PM\n• Govardhan Parikrama: Pre-arranged private transport available upon request\n\nPROPERTY ADDRESS:\nKanha Residency, CMWM+RJX, Techman Nilgiri, Mathura, Uttar Pradesh 281006\nConcierge Desk: +91 98970 12345 | reservations@kanharesidency.com\n\nWarm regards & Jai Shri Krishna,\nKanha Residency Hospitality Team"
+    },
+    {
+      "id": "eml_1790073692823",
+      "recipient": "test@example.com",
+      "subject": "Confirmed: Your Stay at Kanha Residency (ID: KR789478)",
+      "template_name": "Booking Confirmed",
+      "status": "Sent",
+      "sent_time": "2026-09-22T10:41:32.823Z",
+      "related_booking": "KR789478",
+      "body": "Namaste Shri Lucky Raj,\n\nWe are delighted to confirm your upcoming reservation at Kanha Residency, Mathura.\n\nRESERVATION SUMMARY:\n• Booking ID: KR789478\n• Accommodation: Deluxe Room\n• Check-in: 14:00 onwards\n• Check-out: 11:00 AM\n• Rate: ₹4480 (GST 12% included)\n• Status: Confirmed & Guaranteed\n\nLOCAL PILGRIMAGE HIGHLIGHTS:\n• Shri Krishna Janmabhoomi: 10 mins distance\n• Vishram Ghat Evening Yamuna Aarti: 7:00 PM\n• Pure Vegetarian & Sattvic In-Room Dining Available 24/7\n\nProperty Address:\nKanha Residency, CMWM+RJX, Techman Nilgiri, Mathura, UP 281006\nConcierge Line: +91 98970 12345\n\nWarm regards,\nKanha Residency Concierge"
+    },
+    {
+      "id": "eml_1790073129308",
+      "recipient": "luckyrajgupta1994@gmail.com",
+      "subject": "Confirmed: Your Stay at Kanha Residency (ID: KR202609234254)",
+      "template_name": "Booking Confirmed",
+      "status": "Sent",
+      "sent_time": "2026-09-22T10:32:09.308Z",
+      "related_booking": "KR202609234254"
+    },
+    {
+      "id": "eml_1",
+      "recipient": "rahul.sharma@example.com",
+      "subject": "Confirmed: Your Stay at Kanha Residency (ID: KR20260425)",
+      "template_name": "Booking Confirmed",
+      "status": "Sent",
+      "sent_time": "2026-09-22T10:31:10.785Z",
+      "related_booking": "KR20260425"
+    }
+  ],
+  "coupons": [
+    {
+      "id": "cpn_welcome10",
+      "code": "WELCOME10",
+      "type": "percentage",
+      "value": 10,
+      "minimum_amount": 3000,
+      "maximum_discount": 1500,
+      "start_date": "2026-01-01",
+      "end_date": "2026-12-31",
+      "usage_limit": 500,
+      "times_used": 18,
+      "status": "Active"
+    },
+    {
+      "id": "cpn_mathura500",
+      "code": "MATHURA500",
+      "type": "fixed",
+      "value": 500,
+      "minimum_amount": 4000,
+      "maximum_discount": 500,
+      "start_date": "2026-01-01",
+      "end_date": "2026-12-31",
+      "usage_limit": 200,
+      "times_used": 42,
+      "status": "Active"
+    }
+  ],
+  "siteSettings": {
+    "property_name": "Kanha Residency",
+    "tagline": "YOUR STAY, ELEVATED.",
+    "phone": "+91 79836 29114",
+    "email": "reservations@kanharesidency.com",
+    "address": "CMWM+RJX, Techman Nilgiri, Mathura, Uttar Pradesh",
+    "landmark": "Near Techman Nilgiri, NH-19 Corridor",
+    "pincode": "281006",
+    "city": "Mathura",
+    "state": "Uttar Pradesh",
+    "google_maps_url": "https://www.google.com/maps/dir/23.7811896,86.408605/Kanha+Residency,+CMWM%2BRJX,+Techman+Nilgiri,+Mathura,+Uttar+Pradesh+281006/",
+    "tax_percentage": 12,
+    "service_charge": 0,
+    "cancellation_policy": "Flexible",
+    "free_cancellation_hours": 48,
+    "hero_title": "YOUR STAY,\nELEVATED.",
+    "hero_subtitle": "A refined stay in the heart of Mathura.",
+    "hero_location": "MATHURA · UTTAR PRADESH",
+    "hero_image": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1920&q=85",
+    "about_title": "Where Tranquil Comfort Meets Sacred Heritage",
+    "about_description": "Situated in the revered cultural expanse of Mathura, Kanha Residency is envisioned as a sanctuary for modern travelers, pilgrims, and families seeking refined luxury with authentic Indian warmth. Experience spacious, light-filled rooms, pure vegetarian dining, and personalized darshan concierge services that transform your pilgrimage into an effortless memory.",
+    "social_links": {
+      "instagram": "https://instagram.com/kanharesidency",
+      "facebook": "https://facebook.com/kanharesidency",
+      "youtube": "https://youtube.com/@kanharesidency"
+    }
+  },
+  "auditLogs": [
+    {
+      "id": "aud_1790076316809",
+      "user_name": "Lucky Raj Gupta",
+      "user_role": "Guest",
+      "action": "BOOKING_CREATED",
+      "entity": "Booking",
+      "entity_id": "KR202611205561",
+      "new_value": "Room: Superior Room, Amount: 9072",
+      "timestamp": "2026-09-22T11:25:16.809Z",
+      "ip_address": "127.0.0.1"
+    },
+    {
+      "id": "aud_1790076131532",
+      "user_name": "Lucky Raj Gupta",
+      "user_role": "Guest",
+      "action": "BOOKING_CREATED",
+      "entity": "Booking",
+      "entity_id": "KR202611105725",
+      "new_value": "Room: Deluxe Room, Amount: 10584",
+      "timestamp": "2026-09-22T11:22:11.532Z",
+      "ip_address": "127.0.0.1"
+    },
+    {
+      "id": "aud_1790074905414",
+      "user_name": "Lucky Gupta",
+      "user_role": "Guest",
+      "action": "BOOKING_CREATED",
+      "entity": "Booking",
+      "entity_id": "KR202609238512",
+      "new_value": "Room: Superior Room, Amount: 9072",
+      "timestamp": "2026-09-22T11:01:45.414Z",
+      "ip_address": "127.0.0.1"
+    },
+    {
+      "id": "aud_1790073129308",
+      "user_name": "Lucky Gupta",
+      "user_role": "Guest",
+      "action": "BOOKING_CREATED",
+      "entity": "Booking",
+      "entity_id": "KR202609234254",
+      "new_value": "Room: Family Suite, Amount: 19656",
+      "timestamp": "2026-09-22T10:32:09.308Z",
+      "ip_address": "127.0.0.1"
+    },
+    {
+      "id": "aud_init_1",
+      "user_name": "Executive Concierge Admin",
+      "user_role": "Admin",
+      "action": "SYSTEM_INITIALIZED",
+      "entity": "System",
+      "entity_id": "sys_root",
+      "timestamp": "2026-09-22T10:31:10.785Z",
+      "ip_address": "127.0.0.1"
+    }
+  ],
+  "notifications": [
+    {
+      "id": "notif_1790076316809",
+      "type": "booking",
+      "title": "New Confirmed Booking",
+      "message": "Reservation KR202611205561 for Lucky Raj Gupta (Superior Room) - ₹9072",
+      "read": false,
+      "link": "/admin/bookings",
+      "created_at": "2026-09-22T11:25:16.809Z"
+    },
+    {
+      "id": "notif_1790076131532",
+      "type": "booking",
+      "title": "New Confirmed Booking",
+      "message": "Reservation KR202611105725 for Lucky Raj Gupta (Deluxe Room) - ₹10584",
+      "read": false,
+      "link": "/admin/bookings",
+      "created_at": "2026-09-22T11:22:11.532Z"
+    },
+    {
+      "id": "notif_1790074905414",
+      "type": "booking",
+      "title": "New Confirmed Booking",
+      "message": "Reservation KR202609238512 for Lucky Gupta (Superior Room) - ₹9072",
+      "read": false,
+      "link": "/admin/bookings",
+      "created_at": "2026-09-22T11:01:45.414Z"
+    },
+    {
+      "id": "notif_1790073129308",
+      "type": "booking",
+      "title": "New Confirmed Booking",
+      "message": "Reservation KR202609234254 for Lucky Gupta (Family Suite) - ₹19656",
+      "read": false,
+      "link": "/admin/bookings",
+      "created_at": "2026-09-22T10:32:09.308Z"
+    },
+    {
+      "id": "notif_1",
+      "type": "booking",
+      "title": "New Confirmed Reservation",
+      "message": "Booking KR20260425 confirmed for Rahul Sharma (Deluxe Room)",
+      "read": false,
+      "link": "/admin/bookings",
+      "created_at": "2026-09-22T10:31:10.785Z"
+    }
+  ]
+}

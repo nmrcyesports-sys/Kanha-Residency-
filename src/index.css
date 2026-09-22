@@ -1,0 +1,163 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-serif: 'Cormorant Garamond', Georgia, serif;
+    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    font-family: var(--font-sans);
+  }
+
+  h1, h2, h3, .font-serif {
+    font-family: var(--font-serif);
+  }
+}
+
+/* Premium luxury micro-motion & hover interaction system */
+.luxury-card-hover {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.luxury-card-hover:hover {
+  transform: translateY(-4px);
+  border-color: rgba(197, 168, 128, 0.4);
+  box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.7), 0 0 25px -5px rgba(197, 168, 128, 0.12);
+}
+
+.luxury-btn-hover {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.luxury-btn-hover:hover {
+  transform: translateY(-2px) scale(1.015);
+  box-shadow: 0 10px 25px -4px rgba(197, 168, 128, 0.3);
+  filter: brightness(1.05);
+}
+.luxury-btn-hover:active {
+  transform: translateY(0) scale(0.985);
+}
+
+.luxury-pill-hover {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.luxury-pill-hover:hover {
+  border-color: #C5A880;
+  color: #FAF7F2;
+  background-color: rgba(197, 168, 128, 0.12);
+  transform: translateY(-1.5px);
+}
+
+.luxury-link-hover {
+  position: relative;
+  transition: color 0.25s ease;
+}
+.luxury-link-hover::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 1.5px;
+  bottom: -2px;
+  left: 0;
+  background: linear-gradient(90deg, #C5A880, #E5C79E);
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.luxury-link-hover:hover::after {
+  width: 100%;
+}
+
+.luxury-img-zoom {
+  overflow: hidden;
+}
+.luxury-img-zoom img {
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease;
+}
+.luxury-img-zoom:hover img {
+  transform: scale(1.07);
+  filter: brightness(1.04);
+}
+
+.luxury-gold-glow {
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.luxury-gold-glow:focus, .luxury-gold-glow:hover {
+  border-color: #C5A880;
+  box-shadow: 0 0 16px rgba(197, 168, 128, 0.22);
+}
+
+/* Custom delicate luxury scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0E0F12;
+}
+::-webkit-scrollbar-thumb {
+  background: #2A2621;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #C5A880;
+}
+
+/* Universal tactile interactive feedback for all buttons and triggers */
+button, a[role="button"], input[type="submit"], input[type="button"], .interactive-press {
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s ease, filter 0.18s ease, background-color 0.18s ease, border-color 0.18s ease;
+}
+
+button:active:not(:disabled), a[role="button"]:active:not(:disabled), .interactive-press:active {
+  transform: scale(0.965);
+}
+
+/* Luxury pop-in and reveal transitions */
+@keyframes luxuryFadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes luxuryPopIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-pop-in {
+  animation: luxuryPopIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in-up {
+  animation: luxuryFadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+
+/* Print layout for invoices and booking vouchers */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  .no-print, header, nav, footer, .sticky-cta {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .printable-card {
+    border: 1px solid #ddd !important;
+    box-shadow: none !important;
+    color: #111 !important;
+    background: #fff !important;
+  }
+}
