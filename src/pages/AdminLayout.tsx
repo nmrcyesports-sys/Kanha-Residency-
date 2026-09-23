@@ -358,9 +358,13 @@ export function AdminLayout({ onNavigate }: AdminLayoutProps) {
     setTestEmailSuccess(null);
     try {
       const log = await api.sendTestEmail(testEmailRecipient, testEmailTemplate);
-      setTestEmailSuccess(`Dispatched automated "${log.template_name}" email to ${log.recipient} successfully`);
+      const templateTitle = log.template_name || testEmailTemplate || 'Booking Confirmed';
+      setTestEmailSuccess(`Dispatched automated "${templateTitle}" email to ${log.recipient} successfully`);
+      setEmailLogs((prev) => [log, ...prev.filter((item) => item.id !== log.id)]);
       const updated = await api.getEmailLogs();
-      setEmailLogs(updated);
+      if (Array.isArray(updated) && updated.length > 0) {
+        setEmailLogs(updated);
+      }
       setSelectedEmailPreview(log);
     } catch (err: any) {
       alert(err.message || 'Failed to dispatch test email');

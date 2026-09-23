@@ -2,13 +2,24 @@ import express from 'express';
 import path from 'path';
 import fs from 'fs';
 import { createServer as createViteServer } from 'vite';
-import { db, verifyPassword } from './server/db.js';
-import { emailService } from './server/emailService.js';
-import { generateBookingConfirmedEmail } from './server/emailTemplates.js';
+import { db, verifyPassword } from './server/db.ts';
+import { emailService } from './server/emailService.ts';
+import { generateBookingConfirmedEmail } from './server/emailTemplates.ts';
 
 async function startServer() {
   const app = express();
   const PORT = 3000;
+
+  // Enable CORS & handle preflight OPTIONS requests immediately
+  app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    if (req.method === 'OPTIONS') {
+      return res.status(200).end();
+    }
+    next();
+  });
 
   app.use(express.json({ limit: '10mb' }));
 
@@ -502,7 +513,7 @@ async function startServer() {
     res.json(logs);
   });
 
-  app.post('/api/email-send-test', async (req, res) => {
+  app.post(['/api/email-send-test', '/email-send-test'], async (req, res) => {
     try {
       const { to, templateName, customData } = req.body;
       const targetRecipient = to || 'luckyrajgupta1994@gmail.com';
@@ -556,13 +567,26 @@ async function startServer() {
         relatedBooking: bookingId,
       });
 
-      res.json(result);
+      const logs = db.getEmailLogs();
+      const createdLog = logs.find((l) => l.recipient.toLowerCase() === targetRecipient.toLowerCase()) || logs[0] || {
+        id: `eml_${Date.now()}`,
+        recipient: targetRecipient,
+        subject,
+        template_name: templateName || 'Booking Confirmed',
+        status: result.success ? 'Sent' : 'Failed',
+        sent_time: new Date().toISOString(),
+        related_booking: bookingId,
+        body: text,
+        html,
+      };
+
+      res.json(createdLog);
     } catch (err: any) {
       res.status(400).json({ error: err.message });
     }
   });
 
-  app.post('/api/smtp/test', async (req, res) => {
+  app.post(['/api/smtp/test', '/smtp/test'], async (req, res) => {
     try {
       const { host, port, user, pass, secure, testRecipient } = req.body;
       const recipient = testRecipient || user || 'luckyrajgupta1994@gmail.com';
