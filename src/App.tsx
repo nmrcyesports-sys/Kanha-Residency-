@@ -21,9 +21,22 @@ import { LegalPages } from './pages/LegalPages';
 import { AdminLayout } from './pages/AdminLayout';
 import type { Room } from './types';
 
+function getRoutePath(): string {
+  if (typeof window === 'undefined') return '/';
+  const hash = window.location.hash;
+  if (hash) {
+    // Check if hash is used as route like #/rooms or #rooms
+    const cleanHash = hash.replace(/^#\/?/, '/');
+    if (cleanHash && cleanHash !== '/' && !cleanHash.includes('=')) {
+      return cleanHash;
+    }
+  }
+  return window.location.pathname || '/';
+}
+
 function AppContent() {
   const [currentPath, setCurrentPath] = useState<string>(() => {
-    return window.location.pathname || '/';
+    return getRoutePath();
   });
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(() => {
     try {
@@ -46,7 +59,15 @@ function AppContent() {
   };
 
   const navigate = (path: string) => {
-    window.history.pushState({}, '', path);
+    if (window.location.hash.startsWith('#/')) {
+      window.location.hash = path;
+    } else {
+      try {
+        window.history.pushState({}, '', path);
+      } catch {
+        window.location.hash = path;
+      }
+    }
     setCurrentPath(path);
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   };
@@ -56,16 +77,21 @@ function AppContent() {
   }, [currentPath]);
 
   useEffect(() => {
-    const handlePopState = () => {
-      setCurrentPath(window.location.pathname || '/');
+    const handleLocationChange = () => {
+      setCurrentPath(getRoutePath());
     };
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
+    window.addEventListener('popstate', handleLocationChange);
+    window.addEventListener('hashchange', handleLocationChange);
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+      window.removeEventListener('hashchange', handleLocationChange);
+    };
   }, []);
 
   // Clean path without query strings, hashes, or trailing slashes
-  const rawPath = currentPath.split('?')[0].split('#')[0] || '/';
-  const normalizedPath = rawPath.endsWith('/') && rawPath.length > 1 ? rawPath.slice(0, -1) : rawPath;
+  const rawPath = (currentPath || '/').split('?')[0].split('#')[0] || '/';
+  const cleanPath = rawPath.startsWith('/') ? rawPath : `/${rawPath}`;
+  const normalizedPath = cleanPath.endsWith('/') && cleanPath.length > 1 ? cleanPath.slice(0, -1) : cleanPath;
 
   // Admin Route Protection
   const isAdminRoute = normalizedPath.startsWith('/admin');

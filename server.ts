@@ -1,5 +1,6 @@
 import express from 'express';
 import path from 'path';
+import fs from 'fs';
 import { createServer as createViteServer } from 'vite';
 import { db, verifyPassword } from './server/db.js';
 import { emailService } from './server/emailService.js';
@@ -689,12 +690,29 @@ async function startServer() {
   // -------------------------------------------------------------
   // VITE MIDDLEWARE (DEV) / STATIC SERVE (PROD)
   // -------------------------------------------------------------
-  if (process.env.NODE_ENV !== 'production') {
+  const isProd = process.env.NODE_ENV === 'production' || process.argv[1]?.includes('dist/server');
+  if (!isProd) {
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: 'spa',
     });
     app.use(vite.middlewares);
+    // Dev SPA fallback so direct page navigation never returns 404
+    app.get('*', async (req, res, next) => {
+      try {
+        const url = req.originalUrl;
+        const templatePath = path.resolve(process.cwd(), 'index.html');
+        if (fs.existsSync(templatePath)) {
+          let template = fs.readFileSync(templatePath, 'utf-8');
+          template = await vite.transformIndexHtml(url, template);
+          res.status(200).set({ 'Content-Type': 'text/html' }).end(template);
+        } else {
+          next();
+        }
+      } catch (e) {
+        next(e);
+      }
+    });
   } else {
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));

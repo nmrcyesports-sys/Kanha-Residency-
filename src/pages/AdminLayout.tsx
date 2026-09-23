@@ -147,21 +147,7 @@ export function AdminLayout({ onNavigate }: AdminLayoutProps) {
 
   const refreshAllData = async () => {
     try {
-      const [
-        statsData,
-        bookingsData,
-        roomsData,
-        enquiriesData,
-        paymentsData,
-        reviewsData,
-        galleryData,
-        emailLogsData,
-        templatesData,
-        notifsData,
-        auditData,
-        settingsData,
-        availData,
-      ] = await Promise.all([
+      const results = await Promise.allSettled([
         api.getAdminStats(),
         api.getBookings(),
         api.getRooms(true),
@@ -177,19 +163,25 @@ export function AdminLayout({ onNavigate }: AdminLayoutProps) {
         api.getAvailability(),
       ]);
 
-      setStats(statsData);
-      setBookings(bookingsData);
-      setRooms(roomsData);
-      setEnquiries(enquiriesData);
-      setPayments(paymentsData);
-      setReviews(reviewsData);
-      setGallery(galleryData);
-      setEmailLogs(emailLogsData);
-      setEmailTemplates(templatesData);
-      setNotifications(notifsData);
-      setAuditLogs(auditData);
-      setSettings(settingsData);
-      setAvailabilityList(availData);
+      const getVal = <T,>(idx: number, fallback: T): T => {
+        const item = results[idx];
+        return item.status === 'fulfilled' && item.value ? (item.value as T) : fallback;
+      };
+
+      setStats(getVal(0, stats));
+      setBookings(getVal(1, []));
+      setRooms(getVal(2, []));
+      setEnquiries(getVal(3, []));
+      setPayments(getVal(4, []));
+      setReviews(getVal(5, []));
+      setGallery(getVal(6, []));
+      setEmailLogs(getVal(7, []));
+      setEmailTemplates(getVal(8, []));
+      setNotifications(getVal(9, []));
+      setAuditLogs(getVal(10, []));
+      const s = getVal(11, null);
+      if (s) setSettings(s);
+      setAvailabilityList(getVal(12, []));
     } catch (err) {
       console.warn('Admin fetch error:', err);
     } finally {

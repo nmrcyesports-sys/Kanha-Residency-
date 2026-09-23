@@ -1,10 +1,13 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "cleanUrls": true,
+  "framework": "vite",
+  "outputDirectory": "dist",
+  "cleanUrls": false,
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/((?!assets/|favicon.ico|_redirects).*)",
       "destination": "/index.html"
     }
   ]
 }
+
