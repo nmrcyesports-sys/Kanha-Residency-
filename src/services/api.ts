@@ -6,6 +6,29 @@ import {
   DEFAULT_AMENITIES,
   DEFAULT_COUPONS,
 } from '../data/defaultData';
+import {
+  getRoomsFromFirestore,
+  saveRoomToFirestore,
+  createBookingInFirestore,
+  getBookingsFromFirestore,
+  updateBookingStatusInFirestore,
+  getReviewsFromFirestore,
+  createReviewInFirestore,
+  updateReviewStatusInFirestore,
+  deleteReviewFromFirestore,
+  createEnquiryInFirestore,
+  getEnquiriesFromFirestore,
+  updateEnquiryStatusInFirestore,
+  getGalleryFromFirestore,
+  addGalleryItemToFirestore,
+  deleteGalleryItemFromFirestore,
+  getAmenitiesFromFirestore,
+  getSettingsFromFirestore,
+  updateSettingsInFirestore,
+  subscribeToBookings,
+  subscribeToEnquiries,
+  subscribeToReviews,
+} from './firestoreSync';
 import type {
   User,
   Room,
@@ -163,6 +186,12 @@ export const api = {
   // Rooms
   async getRooms(all = false): Promise<Room[]> {
     try {
+      const fsRooms = await getRoomsFromFirestore();
+      if (Array.isArray(fsRooms) && fsRooms.length > 0) {
+        return fsRooms;
+      }
+    } catch {}
+    try {
       const data = await requestJson<Room[]>(`/rooms${all ? '?all=true' : ''}`, undefined, 'Failed to load rooms');
       if (Array.isArray(data) && data.length > 0) {
         return data;
@@ -174,6 +203,11 @@ export const api = {
   },
 
   async getRoom(id: string): Promise<Room> {
+    try {
+      const fsRooms = await getRoomsFromFirestore();
+      const match = fsRooms.find((r) => r.id === id || r.slug === id);
+      if (match) return match;
+    } catch {}
     try {
       const data = await requestJson<Room>(`/rooms/${id}`, undefined, 'Room not found');
       if (data && data.id) {
@@ -188,7 +222,7 @@ export const api = {
   },
 
   async createRoom(data: Partial<Room>): Promise<Room> {
-    return requestJson(
+    const res = await requestJson<Room>(
       '/rooms',
       {
         method: 'POST',
@@ -197,10 +231,14 @@ export const api = {
       },
       'Failed to create room'
     );
+    if (res && res.id) {
+      saveRoomToFirestore(res).catch(() => {});
+    }
+    return res;
   },
 
   async updateRoom(id: string, data: Partial<Room>): Promise<Room> {
-    return requestJson(
+    const res = await requestJson<Room>(
       `/rooms/${id}`,
       {
         method: 'PUT',
@@ -209,13 +247,17 @@ export const api = {
       },
       'Failed to update room'
     );
+    if (res && res.id) {
+      saveRoomToFirestore(res).catch(() => {});
+    }
+    return res;
   },
 
   async updateRoomPrice(
     id: string,
     data: { price?: number; discount_price?: number; inventory_count?: number; status?: string }
   ): Promise<Room> {
-    return requestJson(
+    const res = await requestJson<Room>(
       `/rooms/${id}/price`,
       {
         method: 'PATCH',
@@ -224,6 +266,10 @@ export const api = {
       },
       'Failed to update room price'
     );
+    if (res && res.id) {
+      saveRoomToFirestore(res).catch(() => {});
+    }
+    return res;
   },
 
   async deleteRoom(id: string): Promise<{ success: boolean }> {
@@ -389,8 +435,9 @@ export const api = {
 
   // Bookings
   async createBooking(bookingData: any): Promise<Booking> {
+    let newBooking: Booking | null = null;
     try {
-      return await requestJson(
+      newBooking = await requestJson(
         '/bookings',
         {
           method: 'POST',
@@ -400,11 +447,11 @@ export const api = {
         'Booking failed'
       );
     } catch {
-      // Resilient local storage booking fallback
+      // Resilient booking generator
       const room = DEFAULT_ROOMS.find((r) => r.id === bookingData.room_id) || DEFAULT_ROOMS[0];
       const randomSuffix = Math.floor(1000 + Math.random() * 9000);
       const bookingNumber = `KR-2026-${randomSuffix}`;
-      const newBooking: Booking = {
+      newBooking = {
         id: `bk_${Date.now()}`,
         booking_number: bookingNumber,
         user_id: bookingData.user_id || 'guest_user',
@@ -445,7 +492,13 @@ export const api = {
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       };
+    }
 
+    if (newBooking) {
+      // 1. Sync immediately to Cloud Firestore database
+      createBookingInFirestore(newBooking).catch((e) => console.warn('Firestore sync note:', e));
+
+      // 2. Cache in local storage
       try {
         const stored = localStorage.getItem('kr_local_bookings');
         const list: Booking[] = stored ? JSON.parse(stored) : [];
@@ -455,6 +508,8 @@ export const api = {
 
       return newBooking;
     }
+
+    throw new Error('Unable to create booking');
   },
 
   async getBookings(filters?: {
@@ -463,6 +518,12 @@ export const api = {
     roomId?: string;
     search?: string;
   }): Promise<Booking[]> {
+    try {
+      const fsBookings = await getBookingsFromFirestore();
+      if (Array.isArray(fsBookings) && fsBookings.length > 0) {
+        return fsBookings;
+      }
+    } catch {}
     try {
       const query = new URLSearchParams(filters as any).toString();
       return await requestJson(
@@ -484,6 +545,11 @@ export const api = {
 
   async getBooking(id: string): Promise<Booking> {
     try {
+      const fsBookings = await getBookingsFromFirestore();
+      const match = fsBookings.find((b) => b.id === id || b.booking_number === id);
+      if (match) return match;
+    } catch {}
+    try {
       return await requestJson(`/bookings/${id}`, undefined, 'Booking not found');
     } catch {
       const stored = localStorage.getItem('kr_local_bookings');
@@ -497,6 +563,7 @@ export const api = {
   },
 
   async updateBookingStatus(id: string, status: Booking['status']): Promise<Booking> {
+    updateBookingStatusInFirestore(id, status).catch(() => {});
     return requestJson(
       `/bookings/${id}/status`,
       {
@@ -509,6 +576,7 @@ export const api = {
   },
 
   async cancelBooking(id: string, reason?: string): Promise<Booking> {
+    updateBookingStatusInFirestore(id, 'Cancelled').catch(() => {});
     try {
       return await requestJson(
         `/bookings/${id}/cancel`,
@@ -537,6 +605,12 @@ export const api = {
   },
 
   async getUserBookings(): Promise<Booking[]> {
+    try {
+      const fsBookings = await getBookingsFromFirestore();
+      if (Array.isArray(fsBookings) && fsBookings.length > 0) {
+        return fsBookings;
+      }
+    } catch {}
     try {
       return await requestJson('/user/bookings', { headers: getAuthHeaders() }, 'Failed to fetch your bookings');
     } catch {
@@ -571,6 +645,10 @@ export const api = {
   // Reviews
   async getReviews(all = false): Promise<Review[]> {
     try {
+      const fsReviews = await getReviewsFromFirestore(all);
+      if (Array.isArray(fsReviews) && fsReviews.length > 0) return fsReviews;
+    } catch {}
+    try {
       const data = await requestJson<Review[]>(`/reviews${all ? '?all=true' : ''}`, undefined, 'Failed to fetch reviews');
       if (Array.isArray(data) && data.length > 0) return data;
       return DEFAULT_REVIEWS;
@@ -587,41 +665,47 @@ export const api = {
   },
 
   async submitReview(data: Partial<Review>): Promise<Review> {
+    const newRev: Review = {
+      id: `rev_${Date.now()}`,
+      user_name: data.user_name || 'Guest Traveler',
+      user_location: data.user_location || 'Mathura Pilgrim',
+      room_id: data.room_id || 'room_deluxe',
+      room_name: data.room_name || 'Deluxe Room',
+      rating: data.rating || 5,
+      title: data.title || 'Wonderful experience',
+      review: data.review || 'Exceptional hospitality and peaceful ambience in Mathura.',
+      status: 'Approved',
+      verified_guest: true,
+      created_at: new Date().toISOString(),
+    };
+
+    // 1. Sync to Cloud Firestore database
+    createReviewInFirestore(newRev).catch((e) => console.warn('Firestore review sync note:', e));
+
+    // 2. Cache in local storage
     try {
-      return await requestJson(
-        '/reviews',
-        {
-          method: 'POST',
-          headers: getAuthHeaders(),
-          body: JSON.stringify(data),
-        },
-        'Failed to submit review'
-      );
-    } catch {
-      const newRev: Review = {
-        id: `rev_${Date.now()}`,
-        user_name: data.user_name || 'Guest Traveler',
-        user_location: data.user_location || 'Mathura Pilgrim',
-        room_id: data.room_id || 'room_deluxe',
-        room_name: data.room_name || 'Deluxe Room',
-        rating: data.rating || 5,
-        title: data.title || 'Wonderful experience',
-        review: data.review || 'Exceptional hospitality and peaceful ambience in Mathura.',
-        status: 'Approved',
-        verified_guest: true,
-        created_at: new Date().toISOString(),
-      };
-      try {
-        const stored = localStorage.getItem('kr_local_reviews');
-        const list = stored ? JSON.parse(stored) : [];
-        list.unshift(newRev);
-        localStorage.setItem('kr_local_reviews', JSON.stringify(list));
-      } catch {}
-      return newRev;
-    }
+      const stored = localStorage.getItem('kr_local_reviews');
+      const list = stored ? JSON.parse(stored) : [];
+      list.unshift(newRev);
+      localStorage.setItem('kr_local_reviews', JSON.stringify(list));
+    } catch {}
+
+    // 3. Mirror to server if reachable
+    requestJson(
+      '/reviews',
+      {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data),
+      },
+      'Failed to submit review'
+    ).catch(() => {});
+
+    return newRev;
   },
 
   async updateReviewStatus(id: string, status: Review['status']): Promise<Review> {
+    updateReviewStatusInFirestore(id, status).catch(() => {});
     return requestJson(
       `/reviews/${id}/status`,
       {
@@ -634,6 +718,7 @@ export const api = {
   },
 
   async deleteReview(id: string): Promise<void> {
+    deleteReviewFromFirestore(id).catch(() => {});
     try {
       await requestJson(
         `/reviews/${id}`,
@@ -650,37 +735,46 @@ export const api = {
 
   // Enquiries
   async submitEnquiry(data: { name: string; email: string; phone?: string; message: string }): Promise<Enquiry> {
+    const newEnquiry: Enquiry = {
+      id: `enq_${Date.now()}`,
+      name: data.name,
+      email: data.email,
+      phone: data.phone || '',
+      message: data.message,
+      status: 'New',
+      created_at: new Date().toISOString(),
+    };
+
+    // 1. Sync to Cloud Firestore database
+    createEnquiryInFirestore(newEnquiry).catch((e) => console.warn('Firestore enquiry sync note:', e));
+
+    // 2. Cache locally
     try {
-      return await requestJson(
-        '/enquiries',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
-        },
-        'Failed to submit enquiry'
-      );
-    } catch {
-      const newEnquiry: Enquiry = {
-        id: `enq_${Date.now()}`,
-        name: data.name,
-        email: data.email,
-        phone: data.phone || '',
-        message: data.message,
-        status: 'New',
-        created_at: new Date().toISOString(),
-      };
-      try {
-        const stored = localStorage.getItem('kr_local_enquiries');
-        const list = stored ? JSON.parse(stored) : [];
-        list.unshift(newEnquiry);
-        localStorage.setItem('kr_local_enquiries', JSON.stringify(list));
-      } catch {}
-      return newEnquiry;
-    }
+      const stored = localStorage.getItem('kr_local_enquiries');
+      const list = stored ? JSON.parse(stored) : [];
+      list.unshift(newEnquiry);
+      localStorage.setItem('kr_local_enquiries', JSON.stringify(list));
+    } catch {}
+
+    // 3. Send to server
+    requestJson(
+      '/enquiries',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      },
+      'Failed to submit enquiry'
+    ).catch(() => {});
+
+    return newEnquiry;
   },
 
   async getEnquiries(): Promise<Enquiry[]> {
+    try {
+      const fsEnquiries = await getEnquiriesFromFirestore();
+      if (Array.isArray(fsEnquiries) && fsEnquiries.length > 0) return fsEnquiries;
+    } catch {}
     try {
       return await requestJson('/enquiries', { headers: getAuthHeaders() }, 'Failed to fetch enquiries');
     } catch {
@@ -696,6 +790,7 @@ export const api = {
   },
 
   async updateEnquiry(id: string, status: Enquiry['status'], notes?: string): Promise<Enquiry> {
+    updateEnquiryStatusInFirestore(id, status).catch(() => {});
     return requestJson(
       `/enquiries/${id}`,
       {
@@ -710,6 +805,10 @@ export const api = {
   // Gallery
   async getGallery(): Promise<GalleryItem[]> {
     try {
+      const fsGallery = await getGalleryFromFirestore();
+      if (Array.isArray(fsGallery) && fsGallery.length > 0) return fsGallery;
+    } catch {}
+    try {
       const data = await requestJson<GalleryItem[]>('/gallery', undefined, 'Failed to fetch gallery');
       if (Array.isArray(data) && data.length > 0) return data;
       return DEFAULT_GALLERY;
@@ -719,6 +818,11 @@ export const api = {
   },
 
   async addGalleryItem(data: Omit<GalleryItem, 'id'>): Promise<GalleryItem> {
+    const newItem: GalleryItem = {
+      id: `gal_${Date.now()}`,
+      ...data,
+    };
+    addGalleryItemToFirestore(newItem).catch(() => {});
     return requestJson(
       '/gallery',
       {
@@ -727,10 +831,11 @@ export const api = {
         body: JSON.stringify(data),
       },
       'Failed to add gallery item'
-    );
+    ).catch(() => newItem);
   },
 
   async deleteGalleryItem(id: string): Promise<void> {
+    deleteGalleryItemFromFirestore(id).catch(() => {});
     await requestJson(
       `/gallery/${id}`,
       {
@@ -738,11 +843,15 @@ export const api = {
         headers: getAuthHeaders(),
       },
       'Failed to delete gallery item'
-    );
+    ).catch(() => {});
   },
 
   // Amenities
   async getAmenities(): Promise<Amenity[]> {
+    try {
+      const fsAmenities = await getAmenitiesFromFirestore();
+      if (Array.isArray(fsAmenities) && fsAmenities.length > 0) return fsAmenities;
+    } catch {}
     try {
       const data = await requestJson<Amenity[]>('/amenities', undefined, 'Failed to fetch amenities');
       if (Array.isArray(data) && data.length > 0) return data;
@@ -814,6 +923,10 @@ export const api = {
   // Settings
   async getSettings(): Promise<SiteSettings> {
     try {
+      const fsSettings = await getSettingsFromFirestore();
+      if (fsSettings && fsSettings.property_name) return fsSettings;
+    } catch {}
+    try {
       const data = await requestJson<SiteSettings>('/settings', undefined, 'Failed to fetch settings');
       if (data && data.property_name) return data;
       return DEFAULT_SITE_SETTINGS;
@@ -830,6 +943,7 @@ export const api = {
   },
 
   async updateSettings(settings: Partial<SiteSettings>): Promise<SiteSettings> {
+    updateSettingsInFirestore(settings).catch(() => {});
     return requestJson(
       '/settings',
       {
@@ -838,7 +952,20 @@ export const api = {
         body: JSON.stringify(settings),
       },
       'Failed to update settings'
-    );
+    ).catch(() => ({ ...DEFAULT_SITE_SETTINGS, ...settings }));
+  },
+
+  // Real-time Database Subscriptions
+  subscribeBookings(callback: (bookings: Booking[]) => void) {
+    return subscribeToBookings(callback);
+  },
+
+  subscribeEnquiries(callback: (enquiries: Enquiry[]) => void) {
+    return subscribeToEnquiries(callback);
+  },
+
+  subscribeReviews(callback: (reviews: Review[]) => void) {
+    return subscribeToReviews(callback);
   },
 
   // Notifications

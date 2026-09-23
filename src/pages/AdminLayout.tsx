@@ -191,6 +191,31 @@ export function AdminLayout({ onNavigate }: AdminLayoutProps) {
 
   useEffect(() => {
     refreshAllData();
+
+    // Subscribe to live Firestore database synchronization
+    const unsubBookings = api.subscribeBookings((liveBookings) => {
+      if (liveBookings && liveBookings.length > 0) {
+        setBookings(liveBookings);
+      }
+    });
+
+    const unsubEnquiries = api.subscribeEnquiries((liveEnquiries) => {
+      if (liveEnquiries && liveEnquiries.length > 0) {
+        setEnquiries(liveEnquiries);
+      }
+    });
+
+    const unsubReviews = api.subscribeReviews((liveReviews) => {
+      if (liveReviews && liveReviews.length > 0) {
+        setReviews(liveReviews);
+      }
+    });
+
+    return () => {
+      unsubBookings();
+      unsubEnquiries();
+      unsubReviews();
+    };
   }, []);
 
   const handleUpdateBookingStatus = async (id: string, status: Booking['status']) => {

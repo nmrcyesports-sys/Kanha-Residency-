@@ -1,0 +1,158 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        (request.auth.token.email != null && request.auth.token.email == 'luckyrajgupta1994@gmail.com')
+      );
+    }
+
+    // Rooms
+    function isValidRoom(data) {
+      return data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
+             data.price is number && data.price > 0 &&
+             data.status in ['Available', 'Booked', 'Maintenance'];
+    }
+
+    match /rooms/{roomId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidId(roomId) && isValidRoom(incoming());
+      allow update: if isAdmin() && isValidId(roomId) && isValidRoom(incoming());
+      allow delete: if isAdmin() && isValidId(roomId);
+    }
+
+    // Bookings
+    function isValidBooking(data) {
+      return data.booking_number is string && data.booking_number.size() > 0 && data.booking_number.size() <= 50 &&
+             data.room_id is string && data.room_id.size() > 0 &&
+             data.check_in is string && data.check_in.size() > 0 &&
+             data.check_out is string && data.check_out.size() > 0 &&
+             data.total is number && data.total >= 0 &&
+             data.status in ['Confirmed', 'Pending', 'Cancelled', 'Completed'];
+    }
+
+    match /bookings/{bookingId} {
+      allow create: if isValidId(bookingId) && isValidBooking(incoming());
+      allow get: if isValidId(bookingId) && (isAdmin() || (isSignedIn() && existing().user_id == request.auth.uid) || true);
+      allow list: if isAdmin() || (isSignedIn() && resource.data.user_id == request.auth.uid);
+      allow update: if isValidId(bookingId) && (
+        isAdmin() ||
+        (isSignedIn() && existing().user_id == request.auth.uid && incoming().diff(existing()).affectedKeys().hasOnly(['status']) && incoming().status == 'Cancelled')
+      );
+      allow delete: if isAdmin() && isValidId(bookingId);
+    }
+
+    // Reviews
+    function isValidReview(data) {
+      return data.user_name is string && data.user_name.size() > 0 && data.user_name.size() <= 100 &&
+             data.rating is number && data.rating >= 1 && data.rating <= 5 &&
+             data.title is string && data.title.size() <= 200 &&
+             data.review is string && data.review.size() > 0 && data.review.size() <= 2000 &&
+             data.status in ['Approved', 'Pending', 'Rejected'];
+    }
+
+    match /reviews/{reviewId} {
+      allow read: if resource.data.status == 'Approved' || isAdmin();
+      allow create: if isValidId(reviewId) && isValidReview(incoming());
+      allow update: if isAdmin() && isValidId(reviewId) && isValidReview(incoming());
+      allow delete: if isAdmin() && isValidId(reviewId);
+    }
+
+    // Enquiries
+    function isValidEnquiry(data) {
+      return data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
+             data.email is string && data.email.size() > 0 && data.email.size() <= 150 &&
+             data.message is string && data.message.size() > 0 && data.message.size() <= 2000 &&
+             data.status in ['New', 'Contacted', 'Resolved', 'Archived'];
+    }
+
+    match /enquiries/{enquiryId} {
+      allow create: if isValidId(enquiryId) && isValidEnquiry(incoming());
+      allow read, list: if isAdmin();
+      allow update: if isAdmin() && isValidId(enquiryId) && isValidEnquiry(incoming());
+      allow delete: if isAdmin() && isValidId(enquiryId);
+    }
+
+    // Gallery
+    function isValidGallery(data) {
+      return data.title is string && data.title.size() > 0 && data.title.size() <= 150 &&
+             data.category is string && data.category.size() <= 50 &&
+             data.image is string && data.image.size() > 0 && data.image.size() <= 500 &&
+             data.status in ['Active', 'Inactive'];
+    }
+
+    match /gallery/{galleryId} {
+      allow read: if true;
+      allow create, update: if isAdmin() && isValidId(galleryId) && isValidGallery(incoming());
+      allow delete: if isAdmin() && isValidId(galleryId);
+    }
+
+    // Amenities
+    function isValidAmenity(data) {
+      return data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
+             data.status in ['Active', 'Inactive'];
+    }
+
+    match /amenities/{amenityId} {
+      allow read: if true;
+      allow create, update: if isAdmin() && isValidId(amenityId) && isValidAmenity(incoming());
+      allow delete: if isAdmin() && isValidId(amenityId);
+    }
+
+    // Coupons
+    function isValidCoupon(data) {
+      return data.code is string && data.code.size() > 0 && data.code.size() <= 30 &&
+             data.type in ['percentage', 'fixed'] &&
+             data.value is number && data.value > 0 &&
+             data.status in ['Active', 'Inactive', 'Expired'];
+    }
+
+    match /coupons/{couponId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin() && isValidId(couponId);
+    }
+
+    // Settings
+    function isValidSettings(data) {
+      return data.property_name is string && data.property_name.size() > 0 && data.property_name.size() <= 100 &&
+             data.phone is string && data.phone.size() > 0 && data.phone.size() <= 50 &&
+             data.email is string && data.email.size() > 0 && data.email.size() <= 100;
+    }
+
+    match /settings/{settingsId} {
+      allow read: if true;
+      allow create, update: if isAdmin() && isValidId(settingsId) && isValidSettings(incoming());
+      allow delete: if isAdmin() && isValidId(settingsId);
+    }
+
+    // Admins registry
+    match /admins/{adminId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+  }
+}
